@@ -1,0 +1,29 @@
+{
+  "name": "nodejs-server",
+  "version": "1.0.0",
+  "description": "node js code for project food app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AyushmanGarg21/Culinary-Compass.git"
+  },
+  "author": "AyushmanGarg21",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AyushmanGarg21/Culinary-Compass/issues"
+  },
+  "homepage": "https://github.com/AyushmanGarg21/Culinary-Compass#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.8.0",
+    "nodemon": "^3.1.7"
+  }
+}

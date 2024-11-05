@@ -1,0 +1,16 @@
+Frontend/*.local
+Frontend/node_modules/
+Frontend/build/
+Frontend/.env
+Frontend/.env.local
+Frontend/dist/
+Frontend/pnpm-debug.log*
+
+backendAPIs/nodejs-server/node_modules/
+backendAPIs/nodejs-server/.env
+
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
