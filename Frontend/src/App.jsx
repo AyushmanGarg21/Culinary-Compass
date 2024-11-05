@@ -7,6 +7,7 @@ import Login from './Pages/Login/Login';
 import Register from './Pages/Login/Register';
 import PrivateRoute from './privateRoute';
 import NotFound from './notFound';
+import Profile from './Pages/Users/Profile/Profile';
 
 function App() {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ function App() {
           path="profile"
           element={
             <PrivateRoute roles={['User', 'Creator']}>
-              <div>Profile</div>
+              <Profile/>
             </PrivateRoute>
           }
         />
