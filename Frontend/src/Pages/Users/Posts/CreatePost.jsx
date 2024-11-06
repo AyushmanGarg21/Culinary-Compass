@@ -4,7 +4,7 @@ import { Button, TextField, Box, Chip, IconButton } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import './CreatePost.css'; // For custom Tailwind styling if needed
+import './CSS/CreatePost.css'; // For custom Tailwind styling if needed
 
 const CreatePost = () => {
   const [overview, setOverview] = useState('');

@@ -1,12 +1,19 @@
 // ProfileInfo.jsx
 import React, { useState } from 'react';
 import { TextField, Grid, MenuItem } from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const countries = ['United States', 'Canada', 'Australia', 'United Kingdom', 'Germany', 'India', 'France'];
 const genders = ['Male', 'Female', 'Other'];
 
 const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
 
   const filteredCountries = countries.filter(country =>
     country.toLowerCase().includes(searchTerm.toLowerCase())
@@ -105,10 +112,12 @@ const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
                 label="Weight (kg)"
                 variant="outlined"
                 fullWidth
+                type="number"
                 value={profileData[key]}
+                onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
                 InputProps={{
                   readOnly: !isEditing,
-                  style: { backgroundColor: '#f0f0f0' },
+                  style: { backgroundColor: isEditing ? 'white' : '#f0f0f0' },
                 }}
               />
             </Grid>
@@ -177,9 +186,21 @@ const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
                 label="Password"
                 variant="outlined"
                 fullWidth
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={profileData[key]}
                 onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword ? 'hide the password' : 'display the password'
+                      }
+                      onClick={handleClickShowPassword}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
                 InputProps={{
                   readOnly: !isEditing,
                   style: { backgroundColor: isEditing ? 'white' : '#f0f0f0' },

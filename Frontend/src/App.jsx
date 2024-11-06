@@ -9,6 +9,7 @@ import PrivateRoute from './privateRoute';
 import NotFound from './notFound';
 import Profile from './Pages/Users/Profile/Profile';
 import CreatePost from './Pages/Users/Posts/CreatePost';
+import PostPage from './Pages/Users/Posts/PostPage';
 
 function App() {
   const navigate = useNavigate();
@@ -106,7 +107,7 @@ function App() {
           path="postsbycreators"
           element={
             <PrivateRoute roles={['User', 'Creator']}>
-              <div>Post by Creators</div>
+              <PostPage/>
             </PrivateRoute>
           }
         />

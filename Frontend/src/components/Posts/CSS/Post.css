@@ -1,0 +1,15 @@
+.post-container {
+    @apply p-4 mb-6 bg-white rounded-lg shadow-md;
+  }
+  
+  .recipe-drawer {
+    @apply w-full md:w-80;
+  }
+  
+  .recipe-content p {
+    @apply text-gray-800;
+  }
+
+  .post-container {
+    @apply p-6 mb-8 bg-white rounded-lg shadow-md max-w-lg;
+  }

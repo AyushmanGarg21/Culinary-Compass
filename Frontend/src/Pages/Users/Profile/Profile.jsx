@@ -16,11 +16,11 @@ const Profile = () => {
     language: 'English',
     foodPreference: 'Vegetarian',
     age: '25',
-    weight: '70', // Fixed weight in kg
-    height: '175', // Fixed to cm
-    gender: '', // New field for gender
-    dateOfBirth: '', // New field for date of birth
-    city: '', // New field for city
+    weight: '70',
+    height: '175',
+    gender: '',
+    dateOfBirth: '',
+    city: '',
     password: '',
     aboutMe: '',
   });
