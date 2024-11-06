@@ -8,6 +8,7 @@ import Register from './Pages/Login/Register';
 import PrivateRoute from './privateRoute';
 import NotFound from './notFound';
 import Profile from './Pages/Users/Profile/Profile';
+import CreatePost from './Pages/Users/Posts/CreatePost';
 
 function App() {
   const navigate = useNavigate();
@@ -132,7 +133,7 @@ function App() {
           path="makeapost"
           element={
             <PrivateRoute roles={['Creator']}>
-              <div>Make a Post</div>
+              <CreatePost/>
             </PrivateRoute>
           }
         />

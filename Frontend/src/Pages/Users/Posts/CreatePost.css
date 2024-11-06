@@ -1,0 +1,11 @@
+.create-post-container {
+    @apply p-6 bg-white rounded-lg shadow-lg;
+  }
+  
+  .image-upload label {
+    @apply flex items-center gap-2;
+  }
+  
+  .keyword-list .MuiChip-root {
+    @apply mt-2;
+  }
