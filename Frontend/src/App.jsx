@@ -10,6 +10,8 @@ import NotFound from './notFound';
 import Profile from './Pages/Users/Profile/Profile';
 import CreatePost from './Pages/Users/Posts/CreatePost';
 import PostPage from './Pages/Users/Posts/PostPage';
+import ManageCreators from './Pages/Admin/ManageCreators';
+import ManageUsers from './Pages/Admin/ManageUsers';
 
 function App() {
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ function App() {
           path="manageusers"
           element={
             <PrivateRoute roles={['Admin']}>
-              <div>Manage Users</div>
+              <ManageUsers />
             </PrivateRoute>
           }
         />
@@ -47,7 +49,7 @@ function App() {
           path="managecreators"
           element={
             <PrivateRoute roles={['Admin']}>
-              <div>Manage Creators</div>
+              <ManageCreators />
             </PrivateRoute>
           }
         />
