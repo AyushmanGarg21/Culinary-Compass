@@ -12,10 +12,12 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDrawerOpen } from '../../redux/features/utils/actionSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   const handleMenuClick = () => {
     dispatch(setDrawerOpen({ DrawerOpen: true }));
@@ -23,6 +25,7 @@ export default function Header() {
 
   const handleMailClick = () => {
     console.log("Mail Clicked");
+    navigate('/messages');
   };
 
   const handleNotificationsClick = () => {

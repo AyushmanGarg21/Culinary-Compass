@@ -63,6 +63,7 @@ export default function Sidebar() {
       { text: "Manage Creators", icon: <GroupIcon /> },
       { text: "Users Requests", icon: <RequestQuoteIcon /> },
       { text: "Creator Requests", icon: <RequestQuoteIcon /> },
+      { text: "Messages", icon: <ChatIcon /> },
     ],
   };
 

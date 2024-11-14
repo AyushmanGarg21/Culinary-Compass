@@ -12,6 +12,8 @@ import CreatePost from './Pages/Users/Posts/CreatePost';
 import PostPage from './Pages/Users/Posts/PostPage';
 import ManageCreators from './Pages/Admin/ManageCreators';
 import ManageUsers from './Pages/Admin/ManageUsers';
+import UserRequest from './Pages/Admin/UserRequest';
+import CreatorRequest from './Pages/Admin/CreatorRequest';
 
 function App() {
   const navigate = useNavigate();
@@ -57,7 +59,7 @@ function App() {
           path="usersrequests"
           element={
             <PrivateRoute roles={['Admin']}>
-              <div>Users Requests</div>
+              <UserRequest />
             </PrivateRoute>
           }
         />
@@ -65,7 +67,7 @@ function App() {
           path="creatorrequests"
           element={
             <PrivateRoute roles={['Admin']}>
-              <div>Creator Requests</div>
+              <CreatorRequest />
             </PrivateRoute>
           }
         />
@@ -126,7 +128,7 @@ function App() {
         <Route
           path="messages"
           element={
-            <PrivateRoute roles={['User', 'Creator']}>
+            <PrivateRoute roles={['User', 'Creator' , 'Admin']}>
               <div>Messages</div>
             </PrivateRoute>
           }
