@@ -5,6 +5,7 @@ import authReducer from './features/auth/authSlice';
 import actionSliceReducer from './features/utils/actionSlice';
 import manageSliceReducer from './features/Admin/manageSlice';
 import requestSliceReducer from './features/Admin/requestSlice';
+import usersSliceReducer from './features/Users/usersSlice';
 
 
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
         action: actionSliceReducer,
         manage: manageSliceReducer,
         requests: requestSliceReducer,
+        users: usersSliceReducer,
 
         // [studentsApi.reducerPath]: studentsApi.reducer,
     },

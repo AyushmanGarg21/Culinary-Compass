@@ -11,7 +11,7 @@ const Post = ({ post }) => {
   };
 
   return (
-    <Box className="post-container p-6 mb-8 bg-white rounded-lg shadow-md max-w-xl mx-auto">
+    <Box className="post-container p-6 mb-8 bg-white rounded-lg shadow-md max-w-xl mx-auto min-w-md">
       <Box className="flex items-center justify-between mb-4">
         {/* Profile Picture and Username */}
         <Box className="flex items-center space-x-4">

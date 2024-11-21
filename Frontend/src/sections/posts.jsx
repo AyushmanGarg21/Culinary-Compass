@@ -30,7 +30,7 @@ const dummyPosts = [
 const Posts = () => {
   return (
     <div className="flex flex-col">
-        <div className='flex item-center'>
+        <div className='flex item-center justify-center'>
             <Typography variant="h4" className="font-bold">POSTS</Typography>
         </div>
         <Box className="posts-container p-4 overflow-y-auto h-[70vh] custom-scrollbar mt-8">

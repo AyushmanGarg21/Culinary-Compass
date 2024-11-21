@@ -88,15 +88,15 @@ const FollowedList = () => {
         }
     ];
     return (
-        <div className="flex flex-col">
-            <div>
-                <Typography variant="h4" className="font-bold">Followed Users</Typography>
-            </div>
-            <div className="mt-8 overflow-x-auto h-[70vh] w-[300px] custom-scrollbar">
-                {UserDummyData.map((user) => (
-                    <UserFollowedCard user={user} key={user.id} />
-                ))}
-            </div>
+        <div className="flex flex-col items-center w-full h-screen">
+        <div>
+            <Typography variant="h4" className="font-bold">Followed Users</Typography>
+        </div>
+        <div className="mt-8 overflow-x-auto h-[70vh] w-full max-w-[300px] custom-scrollbar">
+            {UserDummyData.map((user) => (
+            <UserFollowedCard user={user} key={user.id} />
+            ))}
+        </div>
         </div>
     );
     
