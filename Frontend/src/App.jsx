@@ -15,6 +15,7 @@ import ManageUsers from './Pages/Admin/ManageUsers';
 import UserRequest from './Pages/Admin/UserRequest';
 import CreatorRequest from './Pages/Admin/CreatorRequest';
 import Explore from './Pages/Users/Explore/Explore';
+import RecipeSearchPage from './Pages/Users/recipe/RecipeSearchPage';
 
 function App() {
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ function App() {
           path="recipesearch"
           element={
             <PrivateRoute roles={['User', 'Creator']}>
-              <div>Recipe Search</div>
+              <RecipeSearchPage/>
             </PrivateRoute>
           }
         />
