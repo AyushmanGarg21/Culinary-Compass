@@ -1,5 +1,5 @@
 // App.jsx
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useEffect , useRef } from 'react';
 import { useSelector } from 'react-redux';
 import Layout from './Layout';
@@ -19,19 +19,23 @@ import RecipeSearchPage from './Pages/Users/recipe/RecipeSearchPage';
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   const initialRender = useRef(true); // Track if it's the initial render
 
   useEffect(() => {
     if (initialRender.current) { // Only run on the initial load
-      const isLogin = localStorage.getItem('isLogin') === 'true';
-      if (isLogin) {
-        navigate('/'); // Redirect to dashboard if logged in
-      } else {
-        navigate('/login'); // Redirect to login if not logged in
+      // Only auto-redirect when user lands on root "/"
+      if (location.pathname === '/') {
+        const isLogin = localStorage.getItem('isLogin') === 'true';
+        if (isLogin) {
+          navigate('/'); // Stay on app root (protected routes handle content)
+        } else {
+          navigate('/login'); // Redirect to login if not logged in
+        }
       }
       initialRender.current = false; // Set flag to false after first run
     }
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   return (
     <Routes>

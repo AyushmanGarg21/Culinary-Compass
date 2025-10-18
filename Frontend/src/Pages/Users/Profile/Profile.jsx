@@ -21,6 +21,7 @@ const Profile = () => {
     gender: '',
     dateOfBirth: '',
     city: '',
+    username: 'User123',
     password: '',
     aboutMe: '',
   });

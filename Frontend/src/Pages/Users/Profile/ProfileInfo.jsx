@@ -179,7 +179,26 @@ const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
               />
             </Grid>
           );
-        } else if (key === 'password') {
+        } 
+        else if (key === 'username') {
+          return (
+            <Grid item xs={12} sm={4} key={key}>
+              <TextField
+                label="Username"
+                variant="outlined"
+                fullWidth
+                value={profileData[key]}
+                onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
+                InputProps={{
+                  readOnly: !isEditing,
+                  style: { backgroundColor: isEditing ? 'white' : '#f0f0f0' },
+                }}
+              />
+            </Grid>
+          );
+        }
+        
+        else if (key === 'password') {
           return (
             <Grid item xs={12} sm={4} key={key}>
               <TextField
