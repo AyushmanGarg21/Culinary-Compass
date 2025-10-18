@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  Modal, 
-  Box, 
-  Typography, 
-  TextField, 
-  Button, 
-  Fade, 
-  Slide, 
+import {
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Fade,
+  Slide,
   IconButton,
   Stepper,
   Step,
@@ -56,13 +56,13 @@ const CreatorFormModal = ({ open, handleClose }) => {
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       console.log('Submitting Creator Form...', formData);
       setIsSubmitting(false);
       setIsSubmitted(true);
-      
+
       // Reset after showing success
       setTimeout(() => {
         setFormData({ message: '', experience: '', links: '' });
@@ -196,14 +196,14 @@ const CreatorFormModal = ({ open, handleClose }) => {
   };
 
   return (
-    <Modal 
-      open={open} 
-      onClose={handleClose} 
+    <Modal
+      open={open}
+      onClose={handleClose}
       aria-labelledby="creator-form-modal"
       closeAfterTransition
     >
       <Fade in={open} timeout={400}>
-        <Box 
+        <Box
           sx={{
             position: 'absolute',
             top: '50%',
@@ -247,16 +247,16 @@ const CreatorFormModal = ({ open, handleClose }) => {
               <Fade in={isSubmitted} timeout={600}>
                 <Box className="text-center py-8">
                   <Grow in={isSubmitted} timeout={800}>
-                    <CheckIcon 
-                      sx={{ 
-                        fontSize: '4rem', 
+                    <CheckIcon
+                      sx={{
+                        fontSize: '4rem',
                         color: '#4caf50',
                         mb: 2
-                      }} 
+                      }}
                     />
                   </Grow>
-                  <Typography 
-                    variant="h4" 
+                  <Typography
+                    variant="h4"
                     sx={{
                       fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
                       fontWeight: 700,
@@ -266,8 +266,8 @@ const CreatorFormModal = ({ open, handleClose }) => {
                   >
                     Application Submitted!
                   </Typography>
-                  <Typography 
-                    variant="body1" 
+                  <Typography
+                    variant="body1"
                     sx={{
                       fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
                       color: '#666'
@@ -283,15 +283,15 @@ const CreatorFormModal = ({ open, handleClose }) => {
                 <Box className="text-center mb-6">
                   <Slide direction="down" in={open} timeout={600}>
                     <Box>
-                      <StarIcon 
-                        sx={{ 
-                          fontSize: '3rem', 
+                      <StarIcon
+                        sx={{
+                          fontSize: '3rem',
                           color: 'primary.main',
                           mb: 2
-                        }} 
+                        }}
                       />
-                      <Typography 
-                        variant="h4" 
+                      <Typography
+                        variant="h4"
                         sx={{
                           fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
                           fontWeight: 700,
@@ -303,8 +303,8 @@ const CreatorFormModal = ({ open, handleClose }) => {
                       >
                         Become a Creator
                       </Typography>
-                      <Typography 
-                        variant="body1" 
+                      <Typography
+                        variant="body1"
                         sx={{
                           fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
                           color: '#666'
