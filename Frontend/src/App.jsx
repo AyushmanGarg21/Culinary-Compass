@@ -17,6 +17,7 @@ import CreatorRequest from './Pages/Admin/CreatorRequest';
 import Explore from './Pages/Users/Explore/Explore';
 import RecipeSearchPage from './Pages/Users/recipe/RecipeSearchPage';
 import MealPlanner from './Pages/Users/Planner/MealPlanner';
+import Dashboard from './Pages/Users/Dashboard/Dashboard'
 
 function App() {
   const navigate = useNavigate();
@@ -109,7 +110,7 @@ function App() {
           path="dashboard"
           element={
             <PrivateRoute roles={['User', 'Creator']}>
-              <div>Dashboard</div>
+              <Dashboard/>
             </PrivateRoute>
           }
         />

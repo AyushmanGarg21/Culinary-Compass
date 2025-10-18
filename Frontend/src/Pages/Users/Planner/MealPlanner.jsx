@@ -11,7 +11,7 @@ import {
 } from '../../../redux/features/Users/mealPlannerSlice';
 import WeeklyCalendar from '../../../components/MealPlanner/WeeklyCalendar';
 import MealEditModal from '../../../components/MealPlanner/MealEditModal';
-import LoadingSpinner from '../../../components/MealPlanner/LoadingSpinner'
+import LoadingSpinner from '../../../components/common/LoadingSpinner'
 
 const MealPlanner = () => {
   const dispatch = useDispatch();
