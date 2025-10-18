@@ -1,6 +1,6 @@
 // App.jsx
 import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
-import { useEffect , useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import Layout from './Layout';
 import Login from './Pages/Login/Login';
@@ -16,6 +16,7 @@ import UserRequest from './Pages/Admin/UserRequest';
 import CreatorRequest from './Pages/Admin/CreatorRequest';
 import Explore from './Pages/Users/Explore/Explore';
 import RecipeSearchPage from './Pages/Users/recipe/RecipeSearchPage';
+import MealPlanner from './Pages/Users/Planner/MealPlanner';
 
 function App() {
   const navigate = useNavigate();
@@ -99,7 +100,7 @@ function App() {
           path="mealplanner"
           element={
             <PrivateRoute roles={['User', 'Creator']}>
-              <div>Meal Planner</div>
+              <MealPlanner/>
             </PrivateRoute>
           }
         />
@@ -117,7 +118,7 @@ function App() {
           path="postsbycreators"
           element={
             <PrivateRoute roles={['User', 'Creator']}>
-              <PostPage/>
+              <PostPage />
             </PrivateRoute>
           }
         />
@@ -126,7 +127,7 @@ function App() {
           path="explorenearby"
           element={
             <PrivateRoute roles={['User', 'Creator']}>
-              <Explore/>
+              <Explore />
             </PrivateRoute>
           }
         />
@@ -134,7 +135,7 @@ function App() {
         <Route
           path="messages"
           element={
-            <PrivateRoute roles={['User', 'Creator' , 'Admin']}>
+            <PrivateRoute roles={['User', 'Creator', 'Admin']}>
               <div>Messages</div>
             </PrivateRoute>
           }
@@ -144,12 +145,12 @@ function App() {
           path="makeapost"
           element={
             <PrivateRoute roles={['Creator']}>
-              <CreatePost/>
+              <CreatePost />
             </PrivateRoute>
           }
         />
       </Route>
-      <Route path="/notfound" element={<NotFound/>} />
+      <Route path="/notfound" element={<NotFound />} />
     </Routes>
   );
 }

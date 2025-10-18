@@ -7,6 +7,7 @@ import manageSliceReducer from './features/Admin/manageSlice';
 import requestSliceReducer from './features/Admin/requestSlice';
 import usersSliceReducer from './features/Users/usersSlice';
 import recipeSliceReducer from './features/Users/recipeSlice';
+import mealPlannerReducer from './features/Users/mealPlannerSlice';
 
 
 const store = configureStore({
@@ -17,6 +18,7 @@ const store = configureStore({
         requests: requestSliceReducer,
         users: usersSliceReducer,
         recipes: recipeSliceReducer,
+        mealPlanner: mealPlannerReducer,
 
         // [studentsApi.reducerPath]: studentsApi.reducer,
     },

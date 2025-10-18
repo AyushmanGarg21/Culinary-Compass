@@ -1,0 +1,52 @@
+/* Vertical text styling for mobile meal planner */
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Alternative approach using CSS transforms for better browser support - mobile only */
+@media (max-width: 640px) {
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    white-space: nowrap;
+    display: inline-block;
+    transform: rotate(180deg);
+  }
+}
+
+/* Fallback for browsers that don't support writing-mode - mobile only */
+@media (max-width: 640px) {
+  @supports not (writing-mode: vertical-rl) {
+    .vertical-text {
+      transform: rotate(-90deg);
+      transform-origin: center;
+      white-space: nowrap;
+      display: inline-block;
+    }
+  }
+}
+
+/* Desktop-specific adjustments */
+@media (min-width: 641px) {
+  .vertical-text {
+    display: none !important;
+  }
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 640px) {
+  .meal-type-cell {
+    min-width: 40px;
+    max-width: 40px;
+  }
+  
+  .day-cell {
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .calendar-grid {
+    font-size: 0.75rem;
+  }
+}
