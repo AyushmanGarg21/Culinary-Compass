@@ -9,6 +9,8 @@ import usersSliceReducer from './features/Users/usersSlice';
 import recipeSliceReducer from './features/Users/recipeSlice';
 import mealPlannerReducer from './features/Users/mealPlannerSlice';
 import dashboardReducer from './features/Users/dashboardSlice';
+import postsReducer from './features/Posts/postsSlice';
+import followedUsersReducer from './features/FollowedUsers/followedUsersSlice';
 
 
 const store = configureStore({
@@ -21,6 +23,8 @@ const store = configureStore({
         recipes: recipeSliceReducer,
         mealPlanner: mealPlannerReducer,
         dashboard: dashboardReducer,
+        posts: postsReducer,
+        followedUsers: followedUsersReducer,
 
         // [studentsApi.reducerPath]: studentsApi.reducer,
     },

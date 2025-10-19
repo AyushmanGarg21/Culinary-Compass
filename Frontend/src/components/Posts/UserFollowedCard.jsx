@@ -1,29 +1,117 @@
-import { Typography, Button, Link } from '@mui/material';
-import PersonRemoveRoundedIcon from '@mui/icons-material/PersonRemoveRounded';
+import React, { useState } from 'react';
+import { Typography, IconButton, Chip, Tooltip, Fade } from '@mui/material';
+import { 
+  PersonRemoveRounded as PersonRemoveRoundedIcon, 
+  FiberManualRecord as FiberManualRecordIcon,
+  Group as GroupIcon,
+  Message as MessageIcon
+} from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFollow } from '../../redux/features/FollowedUsers/followedUsersSlice';
 
 const UserFollowedCard = ({ user }) => {
+  const dispatch = useDispatch();
+  const { followingIds } = useSelector((state) => state.followedUsers);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const isFollowing = followingIds.has(user.id);
+
+  const handleToggleFollow = () => {
+    dispatch(toggleFollow(user.id));
+  };
+
+  const getFoodPreferenceColor = (preference) => {
+    switch (preference?.toLowerCase()) {
+      case 'veg':
+      case 'vegetarian':
+        return 'bg-green-100 text-green-800';
+      case 'vegan':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'non-veg':
+      case 'non-vegetarian':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const formatLastActive = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Active now';
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    return `${Math.floor(diffInHours / 24)}d ago`;
+  };
+
   return (
-    <div className="flex items-center p-4 bg-white shadow-lg rounded-lg border border-gray-200 w-full max-w-xs">
-      <img
-        src={user.image}
-        alt="avatar"
-        className="w-10 h-10 rounded-full border border-gray-300"
-        style={{ width: '42px', height: '42px' }}
-      />
-      <div className="flex flex-col ml-4 flex-grow min-w-0">
-        <Link href={`/profile/${user.username}`} color="inherit" className="min-w-[80px]">
-          <Typography variant="subtitle2" className="text-gray-800 truncate">
+    <Fade in={true} timeout={300}>
+      <div 
+        className={`flex items-center p-3 bg-white/90 backdrop-blur-sm rounded-xl border border-white/20 transition-all duration-300 cursor-pointer ${
+          isHovered ? 'shadow-lg transform -translate-y-1' : 'shadow-md'
+        }`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Profile Image */}
+        <div className="relative">
+          <img
+            src={user.image}
+            alt={user.username}
+            className="w-12 h-12 rounded-full border-2 border-white shadow-md object-cover"
+          />
+        </div>
+
+        {/* User Info */}
+        <div className="flex-1 ml-3 min-w-0">
+          <Typography 
+            variant="subtitle2" 
+            className="font-semibold text-gray-800 truncate"
+          >
             {user.username}
           </Typography>
-        </Link>
-        <Typography variant="body2" className="text-gray-500 min-w-[80px] truncate">
-          {user.foodpreference}
-        </Typography>
+          
+          <div className="flex items-center space-x-2 mt-1">
+            <Chip 
+              label={user.foodPreference}
+              size="small"
+              className={`text-xs ${getFoodPreferenceColor(user.foodPreference)}`}
+            />
+          </div>
+
+          <div className="text-xs text-gray-500 mt-1">
+            <span>{formatLastActive(user.lastActive)}</span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-1 ml-2">
+          <Tooltip title="Send Message">
+            <IconButton 
+              size="small"
+              className="text-blue-500 hover:bg-blue-50 transition-all duration-200"
+            >
+              <MessageIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title={isFollowing ? "Unfollow" : "Follow"}>
+            <IconButton 
+              onClick={handleToggleFollow}
+              size="small"
+              className={`transition-all duration-200 ${
+                isFollowing 
+                  ? 'text-red-500 hover:bg-red-50' 
+                  : 'text-green-500 hover:bg-green-50'
+              }`}
+            >
+              <PersonRemoveRoundedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </div>
       </div>
-      <button className="bg-blue-50 text-blue-600 p-1 rounded-full shadow-sm ml-4">
-        <PersonRemoveRoundedIcon fontSize="small" />
-      </button>
-    </div>
+    </Fade>
   );
 };
 
