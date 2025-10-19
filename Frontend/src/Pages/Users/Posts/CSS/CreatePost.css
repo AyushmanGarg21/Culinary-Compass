@@ -1,11 +1,127 @@
+/* Enhanced CreatePost Styles */
 .create-post-container {
-    @apply p-6 bg-white rounded-lg shadow-lg;
+  @apply p-6 bg-white rounded-lg shadow-lg;
+}
+
+.image-upload label {
+  @apply flex items-center gap-2;
+}
+
+.keyword-list .MuiChip-root {
+  @apply mt-2;
+}
+
+/* Custom Quill Editor Styling */
+.ql-editor {
+  min-height: 200px !important;
+  font-family: "Inter", "Roboto", "Helvetica", "Arial", sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+.ql-toolbar {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+  border-color: #e0e7ff !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+}
+
+.ql-container {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  border-color: #e0e7ff !important;
+  background: white !important;
+}
+
+/* Drag and Drop Animation */
+.drag-active {
+  @apply border-blue-500 bg-blue-50 scale-105;
+  transition: all 0.3s ease;
+}
+
+/* Step Content Animation */
+.step-content {
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Chip Hover Effects */
+.MuiChip-root {
+  transition: all 0.2s ease !important;
+}
+
+.MuiChip-root:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3) !important;
+}
+
+/* Progress Bar Glow Effect */
+.MuiLinearProgress-bar {
+  box-shadow: 0 0 10px rgba(25, 118, 210, 0.5) !important;
+}
+
+/* Button Hover Effects */
+.MuiButton-contained:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(25, 118, 210, 0.4) !important;
+}
+
+/* Card Hover Effects */
+.MuiCard-root {
+  transition: all 0.3s ease !important;
+}
+
+.MuiCard-root:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Input Focus Effects */
+.MuiTextField-root .MuiOutlinedInput-root:focus-within {
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1) !important;
+}
+
+/* Success Animation */
+.success-icon {
+  animation: bounceIn 0.8s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .create-post-container {
+    @apply p-4 mx-2;
   }
   
-  .image-upload label {
-    @apply flex items-center gap-2;
+  .MuiStepper-root {
+    @apply px-2;
   }
   
-  .keyword-list .MuiChip-root {
-    @apply mt-2;
+  .step-content {
+    @apply px-2;
   }
+}
