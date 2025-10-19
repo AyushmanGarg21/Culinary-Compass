@@ -97,7 +97,7 @@ const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
       }}
     >
       <Grid container spacing={3} className="w-full">
-      {Object.keys(profileData).map((key, index) => {
+      {Object.keys(profileData).filter(key => !['name', 'username', 'aboutMe'].includes(key)).map((key, index) => {
         const commonProps = {
           label: getFieldLabel(key),
           variant: "outlined",
@@ -274,20 +274,6 @@ const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
                       )
                     }
                   }}
-                />
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'aboutMe') {
-          return (
-            <Grid item xs={12} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  multiline
-                  rows={4}
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                  placeholder="Share something interesting about yourself..."
                 />
               </Grow>
             </Grid>

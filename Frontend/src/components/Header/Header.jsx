@@ -38,18 +38,6 @@ const pulse = keyframes`
   }
 `;
 
-const shake = keyframes`
-  0%, 100% {
-    transform: translateX(0);
-  }
-  10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-2px);
-  }
-  20%, 40%, 60%, 80% {
-    transform: translateX(2px);
-  }
-`;
-
 // Styled components
 const AnimatedAppBar = styled(AppBar)(({ theme }) => ({
   background: 'linear-gradient(135deg, #604CC3 0%, #8B7ED8 50%, #604CC3 100%)',
@@ -107,7 +95,6 @@ export default function Header() {
   };
 
   const handleMailClick = () => {
-    console.log("Mail Clicked");
     navigate('/messages');
   };
 
@@ -205,7 +192,8 @@ export default function Header() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AnimatedAppBar position="static">
+      <Box sx={{ height: '65px' }} /> {/* Placeholder for fixed header */}
+      <AnimatedAppBar position="fixed" sx={{ width: '100%', top: 0, zIndex: 1100 }}>
         <Toolbar sx={{ minHeight: '70px' }}>
           <AnimatedIconButton
             size="large"
