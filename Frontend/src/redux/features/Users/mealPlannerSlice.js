@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import mealsData from '../../../data/meals.json';
 
 // Fake API calls
 export const fetchMealTypes = createAsyncThunk(
   'mealPlanner/fetchMealTypes',
   async () => {
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     return [
       { key: 'breakfast', label: 'Breakfast', color: 'bg-yellow-50 border-yellow-200', enabled: true },
       { key: 'brunch', label: 'Brunch', color: 'bg-orange-50 border-orange-200', enabled: true },
@@ -25,61 +26,25 @@ export const fetchMealOptions = createAsyncThunk(
   async () => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
-    
-    return {
-      breakfast: [
-        { id: 1, name: 'Oatmeal with Berries', calories: 250 },
-        { id: 2, name: 'Scrambled Eggs Toast', calories: 320 },
-        { id: 3, name: 'Greek Yogurt Parfait', calories: 180 },
-        { id: 4, name: 'Avocado Toast', calories: 290 },
-        { id: 5, name: 'Smoothie Bowl', calories: 220 }
-      ],
-      brunch: [
-        { id: 6, name: 'Pancakes with Syrup', calories: 450 },
-        { id: 7, name: 'French Toast', calories: 380 },
-        { id: 8, name: 'Eggs Benedict', calories: 520 },
-        { id: 9, name: 'Breakfast Burrito', calories: 480 }
-      ],
-      elevenses: [
-        { id: 30, name: 'Tea and Biscuits', calories: 150 },
-        { id: 31, name: 'Coffee and Pastry', calories: 200 },
-        { id: 32, name: 'Fruit and Nuts', calories: 180 }
-      ],
-      lunch: [
-        { id: 10, name: 'Grilled Chicken Salad', calories: 350 },
-        { id: 11, name: 'Quinoa Buddha Bowl', calories: 420 },
-        { id: 12, name: 'Turkey Sandwich', calories: 380 },
-        { id: 13, name: 'Pasta Primavera', calories: 450 },
-        { id: 14, name: 'Sushi Bowl', calories: 390 }
-      ],
-      afternoonTea: [
-        { id: 33, name: 'Earl Grey with Scones', calories: 250 },
-        { id: 34, name: 'Green Tea with Cookies', calories: 180 },
-        { id: 35, name: 'Herbal Tea with Cake', calories: 300 }
-      ],
-      highTea: [
-        { id: 36, name: 'Traditional High Tea Set', calories: 400 },
-        { id: 37, name: 'Savory Tea Selection', calories: 350 },
-        { id: 38, name: 'Sweet Tea Treats', calories: 450 }
-      ],
-      dinner: [
-        { id: 23, name: 'Grilled Salmon with Rice', calories: 520 },
-        { id: 24, name: 'Chicken Stir Fry', calories: 480 },
-        { id: 25, name: 'Vegetable Curry', calories: 420 },
-        { id: 26, name: 'Beef Tacos', calories: 550 },
-        { id: 27, name: 'Pasta Carbonara', calories: 580 }
-      ],
-      supper: [
-        { id: 39, name: 'Light Soup', calories: 200 },
-        { id: 40, name: 'Cheese and Crackers', calories: 250 },
-        { id: 41, name: 'Warm Milk and Cookies', calories: 180 }
-      ],
-      midnightSnack: [
-        { id: 42, name: 'Cereal Bowl', calories: 150 },
-        { id: 43, name: 'Leftover Pizza Slice', calories: 280 },
-        { id: 44, name: 'Ice Cream', calories: 200 }
-      ]
-    };
+
+    // Group meals by meal type from meals.json
+    const mealsByType = {};
+
+    mealsData.forEach(meal => {
+      const mealType = meal.meal_type;
+      if (!mealsByType[mealType]) {
+        mealsByType[mealType] = [];
+      }
+
+      mealsByType[mealType].push({
+        id: meal.id,
+        name: meal.meal_name,
+        calories: meal.calories,
+        image: meal.image
+      });
+    });
+
+    return mealsByType;
   }
 );
 
@@ -87,14 +52,14 @@ export const addCustomMeal = createAsyncThunk(
   'mealPlanner/addCustomMeal',
   async ({ mealType, name, calories }) => {
     await new Promise(resolve => setTimeout(resolve, 200));
-    
+
     const newMeal = {
       id: Date.now(), // Simple ID generation for demo
       name,
       calories: parseInt(calories),
       isCustom: true
     };
-    
+
     return { mealType, meal: newMeal };
   }
 );
@@ -112,10 +77,10 @@ export const saveWeeklyPlan = createAsyncThunk(
   async (_, { getState }) => {
     const state = getState();
     const { currentWeekPlan, currentWeekOffset } = state.mealPlanner;
-    
+
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // Prepare the data to send to backend
     const weekPlanData = {
       weekOffset: currentWeekOffset,
@@ -125,10 +90,10 @@ export const saveWeeklyPlan = createAsyncThunk(
         return total + Object.values(day).filter(meal => meal !== null).length;
       }, 0)
     };
-    
+
     // In a real app, this would be sent to the backend
     console.log('Saving weekly plan to backend:', weekPlanData);
-    
+
     return weekPlanData;
   }
 );
@@ -137,32 +102,32 @@ export const fetchWeeklyPlan = createAsyncThunk(
   'mealPlanner/fetchWeeklyPlan',
   async (weekOffset = 0, { getState }) => {
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     const state = getState();
     const mealTypes = state.mealPlanner.mealTypes;
-    
+
     // Get the start of the current week (Monday)
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
     const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1; // If Sunday, go back 6 days to Monday
-    
+
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - daysFromMonday + (weekOffset * 7));
-    
+
     const weekPlan = {};
     for (let i = 0; i < 7; i++) {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
       const dateKey = date.toISOString().split('T')[0];
-      
+
       const dayPlan = {};
       mealTypes.forEach(mealType => {
         dayPlan[mealType.key] = null;
       });
-      
+
       weekPlan[dateKey] = dayPlan;
     }
-    
+
     return { weekPlan, weekOffset };
   }
 );
@@ -281,11 +246,11 @@ const mealPlannerSlice = createSlice({
   }
 });
 
-export const { 
-  setEditingMeal, 
-  clearEditingMeal, 
-  copyPreviousWeek, 
+export const {
+  setEditingMeal,
+  clearEditingMeal,
+  copyPreviousWeek,
   toggleMealTypeSettings,
-  updateMealTypeEnabled 
+  updateMealTypeEnabled
 } = mealPlannerSlice.actions;
 export default mealPlannerSlice.reducer;

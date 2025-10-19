@@ -1,0 +1,198 @@
+[
+  {
+    "id": 1,
+    "meal_type": "breakfast",
+    "meal_name": "Oatmeal with Berries",
+    "calories": 350,
+    "image": "🥣"
+  },
+  {
+    "id": 2,
+    "meal_type": "breakfast",
+    "meal_name": "Avocado Toast",
+    "calories": 320,
+    "image": "🥑"
+  },
+  {
+    "id": 3,
+    "meal_type": "breakfast",
+    "meal_name": "Scrambled Eggs with Toast",
+    "calories": 380,
+    "image": "🍳"
+  },
+  {
+    "id": 4,
+    "meal_type": "breakfast",
+    "meal_name": "Greek Yogurt Parfait",
+    "calories": 280,
+    "image": "🥛"
+  },
+  {
+    "id": 5,
+    "meal_type": "breakfast",
+    "meal_name": "Smoothie Bowl",
+    "calories": 420,
+    "image": "🍓"
+  },
+  {
+    "id": 6,
+    "meal_type": "brunch",
+    "meal_name": "Pancakes with Maple Syrup",
+    "calories": 520,
+    "image": "🥞"
+  },
+  {
+    "id": 7,
+    "meal_type": "brunch",
+    "meal_name": "French Toast",
+    "calories": 450,
+    "image": "🍞"
+  },
+  {
+    "id": 8,
+    "meal_type": "brunch",
+    "meal_name": "Eggs Benedict",
+    "calories": 580,
+    "image": "🥚"
+  },
+  {
+    "id": 9,
+    "meal_type": "lunch",
+    "meal_name": "Grilled Chicken Salad",
+    "calories": 450,
+    "image": "🥗"
+  },
+  {
+    "id": 10,
+    "meal_type": "lunch",
+    "meal_name": "Quinoa Buddha Bowl",
+    "calories": 520,
+    "image": "🍲"
+  },
+  {
+    "id": 11,
+    "meal_type": "lunch",
+    "meal_name": "Turkey Club Sandwich",
+    "calories": 480,
+    "image": "🥪"
+  },
+  {
+    "id": 12,
+    "meal_type": "lunch",
+    "meal_name": "Sushi Bowl",
+    "calories": 420,
+    "image": "🍣"
+  },
+  {
+    "id": 13,
+    "meal_type": "lunch",
+    "meal_name": "Pasta Primavera",
+    "calories": 550,
+    "image": "🍝"
+  },
+  {
+    "id": 14,
+    "meal_type": "dinner",
+    "meal_name": "Grilled Salmon with Rice",
+    "calories": 620,
+    "image": "🐟"
+  },
+  {
+    "id": 15,
+    "meal_type": "dinner",
+    "meal_name": "Chicken Stir Fry",
+    "calories": 480,
+    "image": "🍛"
+  },
+  {
+    "id": 16,
+    "meal_type": "dinner",
+    "meal_name": "Beef Tacos",
+    "calories": 650,
+    "image": "🌮"
+  },
+  {
+    "id": 17,
+    "meal_type": "dinner",
+    "meal_name": "Vegetable Curry",
+    "calories": 420,
+    "image": "🍛"
+  },
+  {
+    "id": 18,
+    "meal_type": "dinner",
+    "meal_name": "Pasta Carbonara",
+    "calories": 680,
+    "image": "🍝"
+  },
+  {
+    "id": 19,
+    "meal_type": "dinner",
+    "meal_name": "Steak with Mashed Potatoes",
+    "calories": 850,
+    "image": "🥩"
+  },
+  {
+    "id": 20,
+    "meal_type": "morningSnack",
+    "meal_name": "Greek Yogurt with Honey",
+    "calories": 180,
+    "image": "🍯"
+  },
+  {
+    "id": 21,
+    "meal_type": "morningSnack",
+    "meal_name": "Apple with Peanut Butter",
+    "calories": 200,
+    "image": "🍎"
+  },
+  {
+    "id": 22,
+    "meal_type": "eveningSnack",
+    "meal_name": "Hummus with Veggies",
+    "calories": 210,
+    "image": "🥕"
+  },
+  {
+    "id": 23,
+    "meal_type": "eveningSnack",
+    "meal_name": "Mixed Nuts",
+    "calories": 160,
+    "image": "🥜"
+  },
+  {
+    "id": 24,
+    "meal_type": "eveningSnack",
+    "meal_name": "Dark Chocolate Square",
+    "calories": 120,
+    "image": "🍫"
+  },
+  {
+    "id": 25,
+    "meal_type": "elevenses",
+    "meal_name": "Tea with Biscuits",
+    "calories": 150,
+    "image": "☕"
+  },
+  {
+    "id": 26,
+    "meal_type": "afternoonTea",
+    "meal_name": "Scones with Jam",
+    "calories": 280,
+    "image": "🫖"
+  },
+  {
+    "id": 27,
+    "meal_type": "supper",
+    "meal_name": "Light Vegetable Soup",
+    "calories": 180,
+    "image": "🍲"
+  },
+  {
+    "id": 28,
+    "meal_type": "midnightSnack",
+    "meal_name": "Warm Milk with Honey",
+    "calories": 120,
+    "image": "🥛"
+  }
+]
