@@ -8,7 +8,7 @@ const IngredientSelector = ({ selectedIngredients, setIngredients }) => {
     dairy: "",
     grains: ""
   });
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const scrollRefs = useRef({});
 

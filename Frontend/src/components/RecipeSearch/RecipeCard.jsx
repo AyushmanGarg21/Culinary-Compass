@@ -2,17 +2,7 @@ import React, { useState } from "react";
 
 const RecipeCard = ({ recipe }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty?.toLowerCase()) {
-      case 'easy': return 'text-green-600 bg-green-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'hard': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
 
   const formatTime = (minutes) => {
     if (!minutes) return 'N/A';
@@ -60,22 +50,6 @@ const RecipeCard = ({ recipe }) => {
           </button>
 
         </div>
-
-        {/* Difficulty badge */}
-        {recipe.difficulty && (
-          <div className="absolute top-4 left-4">
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(recipe.difficulty)}`}>
-              {recipe.difficulty}
-            </span>
-          </div>
-        )}
-
-        {/* Rating overlay */}
-        {recipe.rating && (
-          <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-            ⭐ {recipe.rating}
-          </div>
-        )}
       </div>
 
       {/* Content */}
@@ -88,49 +62,6 @@ const RecipeCard = ({ recipe }) => {
             {recipe.description || "A delicious recipe that you'll love to make and share with family and friends."}
           </p>
         </div>
-
-        {/* Recipe stats */}
-        <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center space-x-4">
-            {recipe.cookTime && (
-              <div className="flex items-center space-x-1">
-                <span>⏱️</span>
-                <span>{formatTime(recipe.cookTime)}</span>
-              </div>
-            )}
-            {recipe.servings && (
-              <div className="flex items-center space-x-1">
-                <span>👥</span>
-                <span>{recipe.servings}</span>
-              </div>
-            )}
-          </div>
-          {recipe.calories && (
-            <div className="flex items-center space-x-1">
-              <span>🔥</span>
-              <span>{recipe.calories} cal</span>
-            </div>
-          )}
-        </div>
-
-        {/* Tags */}
-        {recipe.tags && recipe.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {recipe.tags.slice(0, 3).map((tag, index) => (
-              <span
-                key={index}
-                className="px-2 py-1 bg-violet-100 text-violet-700 text-xs rounded-full font-medium"
-              >
-                #{tag}
-              </span>
-            ))}
-            {recipe.tags.length > 3 && (
-              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
-                +{recipe.tags.length - 3} more
-              </span>
-            )}
-          </div>
-        )}
 
         {/* Action button */}
         <button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 px-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl group">

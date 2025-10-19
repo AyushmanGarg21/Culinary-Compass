@@ -22,7 +22,6 @@ const RecipeSearchPage = () => {
       <div className="container mx-auto px-6 py-8">
         <div className="animate-slide-up">
           <div className="relative">
-            {/* Background gradient matching header but faded */}
             <div className="absolute inset-0 bg-gradient-to-r from-violet-200/15 via-purple-200/15 to-indigo-300/15 rounded-2xl"></div>
             <div className="relative">
               <RecipeSearch />
