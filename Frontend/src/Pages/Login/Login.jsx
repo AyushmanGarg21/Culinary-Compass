@@ -228,7 +228,11 @@ const Login = () => {
     localStorage.setItem('isLogin', true);
     localStorage.setItem('role', password);
     localStorage.setItem('accessToken', '1234567890');
-    navigate('/');
+    if (password === 'Admin') {
+            navigate('/manageusers'); // Redirect Admin to manage users page
+    } else {
+      navigate('/dashboard'); // Redirect User/Creator to dashboard
+    }
   };
 
   const handleClickShowPassword = () => {

@@ -29,8 +29,13 @@ function App() {
       // Only auto-redirect when user lands on root "/"
       if (location.pathname === '/') {
         const isLogin = localStorage.getItem('isLogin') === 'true';
+        const role = localStorage.getItem('role');
         if (isLogin) {
-          navigate('/'); // Stay on app root (protected routes handle content)
+          if (role === 'Admin') {
+            navigate('/manageusers'); // Redirect Admin to manage users page
+          } else {
+            navigate('/dashboard'); // Redirect User/Creator to dashboard
+          }
         } else {
           navigate('/login'); // Redirect to login if not logged in
         }

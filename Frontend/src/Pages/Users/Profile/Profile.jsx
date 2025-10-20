@@ -119,10 +119,10 @@ const Profile = () => {
   };
 
   return (
-    <div className="p-6 w-full min-h-[95vh] bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="p-3 sm:p-6 w-full min-h-[95vh] bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Action Buttons at Top */}
       <Slide direction="down" in={true} timeout={600}>
-        <div className="flex gap-4 justify-end items-center mb-6">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end items-stretch sm:items-center mb-4 sm:mb-6">
           <Tooltip title={role === 'Creator' ? 'You are already a creator!' : 'Apply to become a content creator'}>
             <span>
               <Button
@@ -133,14 +133,15 @@ const Profile = () => {
                 startIcon={<StarIcon />}
                 sx={{
                   borderRadius: '25px',
-                  px: 3,
-                  py: 1.5,
+                  px: { xs: 2, sm: 3 },
+                  py: { xs: 1, sm: 1.5 },
                   textTransform: 'none',
                   fontWeight: 600,
                   fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-                  fontSize: '1rem',
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
                   boxShadow: '0 4px 20px rgba(156, 39, 176, 0.3)',
                   transition: 'all 0.3s ease',
+                  width: { xs: '100%', sm: 'auto' },
                   '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow: '0 6px 25px rgba(156, 39, 176, 0.4)'
@@ -163,14 +164,15 @@ const Profile = () => {
               startIcon={isEditing ? <CancelIcon /> : <EditIcon />}
               sx={{
                 borderRadius: '25px',
-                px: 3,
-                py: 1.5,
+                px: { xs: 2, sm: 3 },
+                py: { xs: 1, sm: 1.5 },
                 textTransform: 'none',
                 fontWeight: 600,
                 fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-                fontSize: '1rem',
+                fontSize: { xs: '0.875rem', sm: '1rem' },
                 boxShadow: isEditing ? 'none' : '0 4px 20px rgba(25, 118, 210, 0.3)',
                 transition: 'all 0.3s ease',
+                width: { xs: '100%', sm: 'auto' },
                 '&:hover': {
                   transform: 'translateY(-2px)',
                   boxShadow: isEditing ? '0 2px 10px rgba(25, 118, 210, 0.2)' : '0 6px 25px rgba(25, 118, 210, 0.4)'
@@ -190,14 +192,15 @@ const Profile = () => {
                 startIcon={<SaveIcon />}
                 sx={{
                   borderRadius: '25px',
-                  px: 4,
-                  py: 1.5,
+                  px: { xs: 2, sm: 4 },
+                  py: { xs: 1, sm: 1.5 },
                   textTransform: 'none',
                   fontWeight: 600,
                   fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-                  fontSize: '1rem',
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
                   boxShadow: '0 4px 20px rgba(46, 125, 50, 0.3)',
                   transition: 'all 0.3s ease',
+                  width: { xs: '100%', sm: 'auto' },
                   '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow: '0 6px 25px rgba(46, 125, 50, 0.4)'
@@ -213,14 +216,14 @@ const Profile = () => {
 
       {/* Main Profile Content */}
       <Fade in={true} timeout={800}>
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           {/* Left Side - Profile Picture and About Me */}
-          <div className="flex flex-col space-y-6 w-80">
+          <div className="flex flex-col space-y-4 lg:space-y-6 w-full lg:w-80">
             {/* Profile Picture */}
             <Paper
               elevation={3}
               sx={{
-                p: 3,
+                p: { xs: 2, sm: 3 },
                 borderRadius: 3,
                 background: 'linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%)',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
@@ -250,10 +253,10 @@ const Profile = () => {
                   src={profileImage}
                   onClick={!isUploading ? handleAvatarClick : undefined}
                   sx={{
-                    width: 120,
-                    height: 120,
+                    width: { xs: 100, sm: 120 },
+                    height: { xs: 100, sm: 120 },
                     bgcolor: 'primary.main',
-                    fontSize: '3rem',
+                    fontSize: { xs: '2.5rem', sm: '3rem' },
                     boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                     transition: 'all 0.3s ease-in-out',
                     cursor: isUploading ? 'default' : 'pointer',
@@ -297,7 +300,7 @@ const Profile = () => {
                     size="small"
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        fontSize: '1.5rem',
+                        fontSize: { xs: '1.25rem', sm: '1.5rem' },
                         fontWeight: 700,
                         textAlign: 'center',
                         fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
@@ -314,7 +317,9 @@ const Profile = () => {
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       letterSpacing: '-0.02em',
-                      mb: 1
+                      mb: 1,
+                      fontSize: { xs: '1.5rem', sm: '2.125rem' },
+                      textAlign: 'center'
                     }}
                   >
                     {profileData.name}
@@ -337,7 +342,7 @@ const Profile = () => {
             <Paper
               elevation={3}
               sx={{
-                p: 3,
+                p: { xs: 2, sm: 3 },
                 borderRadius: 3,
                 background: 'linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%)',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
@@ -361,7 +366,7 @@ const Profile = () => {
                 value={profileData.aboutMe}
                 onChange={(e) => setProfileData({ ...profileData, aboutMe: e.target.value })}
                 multiline
-                rows={4}
+                rows={{ xs: 3, sm: 4 }}
                 fullWidth
                 variant="outlined"
                 placeholder="Share something interesting about yourself..."
@@ -372,6 +377,7 @@ const Profile = () => {
                     borderRadius: 2,
                     transition: 'all 0.3s ease',
                     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
                     '&:hover': {
                       backgroundColor: isEditing ? '#ffffff' : '#f0f2f5',
                     },
@@ -393,7 +399,7 @@ const Profile = () => {
           </div>
 
           {/* Right Side - Profile Information */}
-          <div className="flex-1">
+          <div className="flex-1 w-full">
             <ProfileInfo
               profileData={profileData}
               isEditing={isEditing}
@@ -411,6 +417,13 @@ const Profile = () => {
         autoHideDuration={4000}
         onClose={handleCloseSuccessMessage}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbar-root': {
+            left: { xs: '16px', sm: 'auto' },
+            right: { xs: '16px', sm: 'auto' },
+            width: { xs: 'calc(100% - 32px)', sm: 'auto' }
+          }
+        }}
       >
         <Alert
           onClose={handleCloseSuccessMessage}
@@ -432,6 +445,13 @@ const Profile = () => {
         autoHideDuration={4000}
         onClose={handleCloseProfileUpdateMessage}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbar-root': {
+            left: { xs: '16px', sm: 'auto' },
+            right: { xs: '16px', sm: 'auto' },
+            width: { xs: 'calc(100% - 32px)', sm: 'auto' }
+          }
+        }}
       >
         <Alert
           onClose={handleCloseProfileUpdateMessage}
