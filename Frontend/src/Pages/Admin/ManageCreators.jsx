@@ -24,51 +24,81 @@ const ManageCreators = () => {
     );
   
     return (
-      <div className="p-4 flex flex-col items-center">
-         <div className="mb-6 w-3/4 md:w-1/2 lg:w-1/3">
-        <TextField
-          label="Search Users"
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
-          onChange={handleSearch}
-          className="rounded-full shadow-md bg-white"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon style={{ color: '#888' }} />
-              </InputAdornment>
-            ),
-            style: {
-              borderRadius: '9999px',
-              padding: '10px 20px', 
-              backgroundColor: '#f3f4f6',
-              border: '1px solid #ddd',
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-            },
-          }}
-          InputLabelProps={{
-            style: {
-              fontSize: '1rem',
-              color: '#888',
-            },
-          }}
-        />
-      </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 w-full">
-          {filteredCreators.map((creator) => (
-            <ManageCard
-              key={creator.id}
-              id = {creator.id}
-              name={creator.name}
-              phone={creator.phone}
-              email={creator.email}
-              role="creator"
-              onDelete={() => console.log(`Delete ${creator.id}`)}
-              onDeactivate={() => console.log(`Deactivate ${creator.id}`)}
-              onRemoveFromCreator={() => console.log(`Remove from Creator ${creator.id}`)}
-            />
-          ))}
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-green-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-800 mb-2">Manage Creators</h1>
+            <p className="text-slate-600 font-medium">Oversee and manage creator accounts</p>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mb-8 flex justify-center">
+            <div className="w-full max-w-md">
+              <TextField
+                label="Search creators by name or email"
+                variant="outlined"
+                fullWidth
+                value={searchQuery}
+                onChange={handleSearch}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon className="text-slate-400" />
+                    </InputAdornment>
+                  ),
+                  style: {
+                    borderRadius: '12px',
+                    backgroundColor: 'white',
+                    fontFamily: 'Inter, system-ui, sans-serif',
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    fontFamily: 'Inter, system-ui, sans-serif',
+                    fontWeight: '500',
+                  },
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#e2e8f0',
+                      borderWidth: '2px',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#10b981',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#10b981',
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCreators.length === 0 ? (
+              <div className="col-span-full flex justify-center items-center py-12">
+                <div className="text-slate-500 font-medium">No creators found</div>
+              </div>
+            ) : (
+              filteredCreators.map((creator) => (
+                <ManageCard
+                  key={creator.id}
+                  id={creator.id}
+                  name={creator.name}
+                  phone={creator.phone}
+                  email={creator.email}
+                  role="creator"
+                  onDelete={() => console.log(`Delete ${creator.id}`)}
+                  onDeactivate={() => console.log(`Deactivate ${creator.id}`)}
+                  onRemoveFromCreator={() => console.log(`Remove from Creator ${creator.id}`)}
+                />
+              ))
+            )}
+          </div>
         </div>
       </div>
     );

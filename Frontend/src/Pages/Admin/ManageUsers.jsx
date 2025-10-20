@@ -24,50 +24,80 @@ const ManageUsers = () => {
   );
 
   return (
-    <div className="p-4 flex flex-col items-center">
-      <div className="mb-6 w-3/4 md:w-1/2 lg:w-1/3">
-        <TextField
-          label="Search Users"
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
-          onChange={handleSearch}
-          className="rounded-full shadow-md bg-white"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon style={{ color: '#888' }} />
-              </InputAdornment>
-            ),
-            style: {
-              borderRadius: '9999px',
-              padding: '10px 20px', 
-              backgroundColor: '#f3f4f6',
-              border: '1px solid #ddd',
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-            },
-          }}
-          InputLabelProps={{
-            style: {
-              fontSize: '1rem',
-              color: '#888',
-            },
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 w-full">
-        {filteredUsers.map((user) => (
-          <ManageCard
-            key={user.id}
-            id={user.id}
-            name={user.name}
-            phone={user.phone}
-            email={user.email}
-            role="user"
-            onDelete={() => console.log(`Delete ${user.id}`)}
-            onDeactivate={() => console.log(`Deactivate ${user.id}`)}
-          />
-        ))}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-800 mb-2">Manage Users</h1>
+          <p className="text-slate-600 font-medium">Oversee and manage user accounts</p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-8 flex justify-center">
+          <div className="w-full max-w-md">
+            <TextField
+              label="Search users by name or email"
+              variant="outlined"
+              fullWidth
+              value={searchQuery}
+              onChange={handleSearch}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon className="text-slate-400" />
+                  </InputAdornment>
+                ),
+                style: {
+                  borderRadius: '12px',
+                  backgroundColor: 'white',
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                  fontWeight: '500',
+                },
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: '#e2e8f0',
+                    borderWidth: '2px',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#8b5cf6',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#8b5cf6',
+                  },
+                },
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredUsers.length === 0 ? (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <div className="text-slate-500 font-medium">No users found</div>
+            </div>
+          ) : (
+            filteredUsers.map((user) => (
+              <ManageCard
+                key={user.id}
+                id={user.id}
+                name={user.name}
+                phone={user.phone}
+                email={user.email}
+                role="user"
+                onDelete={() => console.log(`Delete ${user.id}`)}
+                onDeactivate={() => console.log(`Deactivate ${user.id}`)}
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
