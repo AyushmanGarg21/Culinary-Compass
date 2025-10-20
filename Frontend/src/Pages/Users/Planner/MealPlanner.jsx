@@ -192,7 +192,7 @@ const MealPlanner = () => {
           </div>
         </div>
 
-        {/* Enhanced Error Display */}
+        
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 animate-in slide-in-from-top duration-300">
             <div className="flex items-center gap-2">
@@ -202,7 +202,6 @@ const MealPlanner = () => {
           </div>
         )}
 
-        {/* Enhanced Weekly Calendar */}
         <div className="animate-in slide-in-from-bottom duration-700">
           <WeeklyCalendar
             weekPlan={currentWeekPlan}

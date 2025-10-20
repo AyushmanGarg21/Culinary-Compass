@@ -9,11 +9,11 @@ export const fetchMealTypes = createAsyncThunk(
 
     return [
       { key: 'breakfast', label: 'Breakfast', color: 'bg-yellow-50 border-yellow-200', enabled: true },
-      { key: 'brunch', label: 'Brunch', color: 'bg-orange-50 border-orange-200', enabled: true },
+      { key: 'brunch', label: 'Brunch', color: 'bg-orange-50 border-orange-200', enabled: false },
       { key: 'elevenses', label: 'Elevenses', color: 'bg-pink-50 border-pink-200', enabled: false },
       { key: 'lunch', label: 'Lunch', color: 'bg-blue-50 border-blue-200', enabled: true },
       { key: 'afternoonTea', label: 'Afternoon Tea', color: 'bg-amber-50 border-amber-200', enabled: false },
-      { key: 'highTea', label: 'High Tea', color: 'bg-indigo-50 border-indigo-200', enabled: false },
+      { key: 'highTea', label: 'High Tea', color: 'bg-indigo-50 border-indigo-200', enabled: true },
       { key: 'dinner', label: 'Dinner', color: 'bg-red-50 border-red-200', enabled: true },
       { key: 'supper', label: 'Supper', color: 'bg-purple-50 border-purple-200', enabled: false },
       { key: 'midnightSnack', label: 'Midnight Snack', color: 'bg-gray-50 border-gray-200', enabled: false }
