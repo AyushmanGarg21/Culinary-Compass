@@ -17,7 +17,8 @@ import CreatorRequest from './Pages/Admin/CreatorRequest';
 import Explore from './Pages/Users/Explore/Explore';
 import RecipeSearchPage from './Pages/Users/recipe/RecipeSearchPage';
 import MealPlanner from './Pages/Users/Planner/MealPlanner';
-import Dashboard from './Pages/Users/Dashboard/Dashboard'
+import Dashboard from './Pages/Users/Dashboard/Dashboard';
+import MessagePage from './Pages/Users/Messages/MessagePage';
 
 function App() {
   const navigate = useNavigate();
@@ -142,7 +143,7 @@ function App() {
           path="messages"
           element={
             <PrivateRoute roles={['User', 'Creator', 'Admin']}>
-              <div>Messages</div>
+              <MessagePage />
             </PrivateRoute>
           }
         />

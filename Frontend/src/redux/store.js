@@ -11,6 +11,7 @@ import mealPlannerReducer from './features/Users/mealPlannerSlice';
 import dashboardReducer from './features/Users/dashboardSlice';
 import postsReducer from './features/Posts/postsSlice';
 import followedUsersReducer from './features/FollowedUsers/followedUsersSlice';
+import messagesReducer from './features/Messages/messagesSlice';
 import metaReducer from './features/utils/metaSlice';
 
 
@@ -26,7 +27,8 @@ const store = configureStore({
         dashboard: dashboardReducer,
         posts: postsReducer,
         followedUsers: followedUsersReducer,
-    meta: metaReducer,
+        messages: messagesReducer,
+        meta: metaReducer,
 
         // [studentsApi.reducerPath]: studentsApi.reducer,
     },
