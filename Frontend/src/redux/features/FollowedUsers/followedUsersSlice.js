@@ -74,7 +74,7 @@ const followedUsersSlice = createSlice({
     followedUsers: [],
     loading: false,
     error: null,
-    followingIds: new Set()
+    followingIds: []
   },
   reducers: {
     clearError: (state) => {
@@ -91,7 +91,7 @@ const followedUsersSlice = createSlice({
         state.loading = false;
         state.followedUsers = action.payload;
         // Initialize all as followed
-        state.followingIds = new Set(action.payload.map(user => user.id));
+        state.followingIds = action.payload.map(user => user.id);
       })
       .addCase(fetchFollowedUsers.rejected, (state, action) => {
         state.loading = false;
@@ -99,10 +99,11 @@ const followedUsersSlice = createSlice({
       })
       .addCase(toggleFollow.fulfilled, (state, action) => {
         const userId = action.payload;
-        if (state.followingIds.has(userId)) {
-          state.followingIds.delete(userId);
+        const index = state.followingIds.indexOf(userId);
+        if (index !== -1) {
+          state.followingIds.splice(index, 1);
         } else {
-          state.followingIds.add(userId);
+          state.followingIds.push(userId);
         }
       });
   }

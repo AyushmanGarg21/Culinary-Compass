@@ -14,7 +14,7 @@ const UserFollowedCard = ({ user }) => {
   const { followingIds } = useSelector((state) => state.followedUsers);
   const [isHovered, setIsHovered] = useState(false);
   
-  const isFollowing = followingIds.has(user.id);
+  const isFollowing = followingIds.includes(user.id);
 
   const handleToggleFollow = () => {
     dispatch(toggleFollow(user.id));

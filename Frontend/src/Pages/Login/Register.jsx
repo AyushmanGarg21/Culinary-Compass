@@ -115,7 +115,6 @@ const PatternSection = styled(Box)(({ theme }) => ({
       radial-gradient(circle at 50% 50%, rgba(168, 237, 234, 0.2) 0%, transparent 50%)
     `,
   },
-  display: 'none',
   [theme.breakpoints.up('md')]: {
     display: 'flex',
     width: '60%',
