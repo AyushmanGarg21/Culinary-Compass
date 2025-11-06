@@ -1,19 +1,45 @@
-Frontend/*.local
-Frontend/node_modules/
-Frontend/build/
-Frontend/.env
-Frontend/.env.local
-Frontend/dist/
-Frontend/pnpm-debug.log*
+*.local
+node_modules/
+build/
+dist/
+pnpm-debug.log*
 
-backendAPIs/nodejs-server/node_modules/
-backendAPIs/nodejs-server/.env
-backendAPIs/fast-api/.env
-backendAPIs/fast-api/__pycache__/
-backendAPIs/fast-api/venv/
-backendAPIs/fast-api/logs/
+
+# Python
+.Python
+.env
+__pycache__/
+venv/
+logs/
+*.log
+lib/
+lib64/
 
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+# FastAPI
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pytest
+.pytest_cache/
+pytest.ini
