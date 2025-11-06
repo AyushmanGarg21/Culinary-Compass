@@ -8,7 +8,10 @@ Frontend/pnpm-debug.log*
 
 backendAPIs/nodejs-server/node_modules/
 backendAPIs/nodejs-server/.env
-
+backendAPIs/fast-api/.env
+backendAPIs/fast-api/__pycache__/
+backendAPIs/fast-api/venv/
+backendAPIs/fast-api/logs/
 
 .vscode/*
 !.vscode/extensions.json
