@@ -15,6 +15,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.config.logging_config import log_info, log_error, log_warning
+from app.config.middleware import AuthMiddleware
 from app.db.database import engine
 from app.models.base import Base
 
@@ -47,6 +48,8 @@ app.add_middleware(
     allow_headers=["*"],
     max_age=600,
 )
+
+app.middleware("http")(AuthMiddleware(app))
 
 # Exception Handlers
 @app.exception_handler(RequestValidationError)
