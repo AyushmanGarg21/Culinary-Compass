@@ -7,7 +7,3 @@ router = APIRouter(
     tags=["Admin"],
     dependencies=[Depends(RoleAccess.admin_access)],
 )
-
-@router.get("/")
-async def get_admin_welcome():
-    return {"message": "Welcome to the Admin"}
