@@ -9,7 +9,7 @@ from app.models.user import User
 from app.models.user_auth_identity import UserAuthIdentity
 from app.models.country import Country
 from app.models.city import City
-from app.schema.userProfileSchema import UpdateUserProfileRequest, UpdatePasswordRequest
+from app.schemas.userProfileSchema import UpdateUserProfileRequest, UpdatePasswordRequest
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

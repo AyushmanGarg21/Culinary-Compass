@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from app.db.database import get_db
-from app.schema.masterSchema import (
+from app.schemas.masterSchema import (
     CountryResponse, CityResponse, MealResponse, IngredientResponse
 )
 from app.services.masterService import (

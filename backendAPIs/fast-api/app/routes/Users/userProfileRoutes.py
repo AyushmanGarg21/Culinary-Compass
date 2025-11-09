@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.schema.userProfileSchema import (
+from app.schemas.userProfileSchema import (
     UserProfileResponse,
     UpdateUserProfileRequest,
     UpdatePasswordRequest
