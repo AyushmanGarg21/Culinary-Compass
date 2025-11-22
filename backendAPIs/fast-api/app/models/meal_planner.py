@@ -1,5 +1,5 @@
 from uuid import uuid4
-from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -14,6 +14,8 @@ class MealPlanner(Base):
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     date = Column(Date, nullable=False, index=True)
     meal_type = Column(String(100), nullable=False)
+    is_marked_done = Column(Boolean, default=False)
+    is_custom_meal = Column(Boolean, default=False)
     meal_id = Column(Integer, ForeignKey("meals.id", ondelete="SET NULL"), nullable=True)
     custom_meal_name = Column(String(255), nullable=True)
     custom_calories = Column(String(64), nullable=True)
