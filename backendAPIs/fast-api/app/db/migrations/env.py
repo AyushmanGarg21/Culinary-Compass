@@ -13,6 +13,20 @@ from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
+# Ensure the project root (fast-api) is on sys.path so `app` imports work
+import sys
+from pathlib import Path
+
+_this_file = Path(__file__).resolve()
+# parents: [migrations, db, app, fast-api, ...]
+try:
+    project_root = _this_file.parents[3]
+except IndexError:
+    project_root = _this_file.parent
+
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
 # Import your models so Alembic can autodiscover them
 from app.models import Base
 
