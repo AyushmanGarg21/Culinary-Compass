@@ -107,3 +107,66 @@ class ActionResponse(BaseModel):
     userId: Optional[str] = None
     requestId: Optional[int] = None
     postId: Optional[int] = None
+
+
+# Admin Messaging Schemas
+class SendMessageRequest(BaseModel):
+    """Schema for sending a message to user."""
+    content: str = Field(..., min_length=1, max_length=5000, description="Message content")
+
+
+class AdminMessageInfo(BaseModel):
+    """Schema for admin message information."""
+    id: int
+    userId: Optional[str] = None
+    adminId: Optional[str] = None
+    sender: str
+    content: str
+    isRead: bool
+    createdAt: Optional[str] = None
+
+
+class UserBasicInfo(BaseModel):
+    """Schema for basic user information in messages."""
+    id: str
+    name: Optional[str] = None
+    email: str
+    profilePic: Optional[str] = None
+
+
+class AdminConversationInfo(BaseModel):
+    """Schema for admin conversation information."""
+    id: str
+    username: str
+    email: str
+    image: str
+    lastMessage: str
+    lastMessageTime: Optional[str] = None
+    lastMessageSender: str
+    unreadCount: int
+    isOnline: bool = False
+
+
+class AdminConversationsListResponse(BaseModel):
+    """Schema for admin conversations list response."""
+    conversations: List[AdminConversationInfo]
+
+
+class AdminMessagesListResponse(BaseModel):
+    """Schema for admin messages list response."""
+    messages: List[AdminMessageInfo]
+    total: int
+    skip: int
+    limit: int
+    user: UserBasicInfo
+
+
+class UnreadCountResponse(BaseModel):
+    """Schema for unread count response."""
+    unreadCount: int
+
+
+class MarkAsReadResponse(BaseModel):
+    """Schema for mark as read response."""
+    message: str
+    updated_count: int
