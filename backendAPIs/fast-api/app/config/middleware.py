@@ -57,7 +57,12 @@ class AuthMiddleware:
 
     async def __call__(self, request: Request, call_next):
         """Process the request and validate authentication."""
-        
+
+        # Always let OPTIONS preflight requests through — the browser sends these
+        # before the actual request and they must never require authentication.
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         if self._is_public_route(request.url.path):
             return await call_next(request)
 
