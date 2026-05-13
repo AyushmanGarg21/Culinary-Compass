@@ -4,7 +4,7 @@ from typing import Optional
 from uuid import uuid4
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError, DatabaseError, IntegrityError
-from fastapi import HTTPException, status
+from fastapi import HTTPException, Request, status
 import bcrypt
 
 from app.models.user import User
@@ -36,6 +36,40 @@ class AuthService:
             plain_password.encode('utf-8'),
             hashed_password.encode('utf-8')
         )
+
+    @staticmethod
+    def _get_user_id_from_token(request: Request) -> tuple[str, int]:
+        """
+        Extract user_id and provider_id by decoding the Bearer token directly.
+        Used for routes under /auth/* that are bypassed by the middleware.
+
+        Returns:
+            Tuple of (user_id, provider_id)
+
+        Raises:
+            HTTPException 401 if token is missing or invalid.
+        """
+        auth_header = request.headers.get("Authorization", "")
+        parts = auth_header.split()
+        if len(parts) != 2 or parts[0].lower() != "bearer":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Missing or invalid authentication token"
+            )
+        payload = decode_token(parts[1])
+        if not payload or payload.get("type") != "access":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired token"
+            )
+        user_id = payload.get("sub")
+        provider_id = payload.get("provider_id")
+        if not user_id or provider_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token is missing required claims"
+            )
+        return user_id, provider_id
 
     @staticmethod
     def sign_up(
@@ -283,14 +317,14 @@ class AuthService:
             # Find admin
             admin = db.query(Admin).filter(Admin.email == email).first()
 
-            if not admin or not admin.password_hash:
+            if not admin or not admin.password:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid email or password"
                 )
 
             # Verify password
-            if not AuthService.verify_password(password, admin.password_hash):
+            if not AuthService.verify_password(password, admin.password):
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid email or password"

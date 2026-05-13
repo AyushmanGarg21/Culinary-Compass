@@ -73,8 +73,20 @@ async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError):
 
 @app.get("/health", tags=["Health"])
 async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy", "version": app.version}
+    """Health check endpoint — also verifies database connectivity."""
+    db_status = "connected"
+    try:
+        with engine.connect() as conn:
+            conn.execute(__import__("sqlalchemy").text("SELECT 1"))
+    except Exception as e:
+        log_error(f"DB health check failed: {str(e)}")
+        db_status = "unavailable"
+
+    return {
+        "status": "healthy" if db_status == "connected" else "degraded",
+        "version": app.version,
+        "database": db_status,
+    }
 
 
 from app.api.authRoutes import router as auth_router

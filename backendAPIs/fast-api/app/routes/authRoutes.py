@@ -148,11 +148,11 @@ async def logout(
     Logout user.
     
     Invalidates user's tokens.
-    User ID and provider ID are extracted from JWT token in request state.
+    User ID and provider ID are decoded directly from the Bearer token
+    since /auth routes are public in the middleware.
     """
     try:
-        user_id = request.state.user_id
-        provider_id = request.state.provider_id
+        user_id, provider_id = AuthService._get_user_id_from_token(request)
         result = AuthService.logout(db, user_id, provider_id)
         return ResponseHelper.success_response(
             data=result,
@@ -176,10 +176,11 @@ async def get_current_user(
     Get current user information.
     
     Returns detailed information about the authenticated user.
-    User ID is extracted from JWT token in request state.
+    User ID is decoded directly from the Bearer token since /auth
+    routes are public in the middleware.
     """
     try:
-        user_id = request.state.user_id
+        user_id, _ = AuthService._get_user_id_from_token(request)
         user_data = AuthService.get_current_user(db, user_id)
         return ResponseHelper.success_response(
             data=user_data,
