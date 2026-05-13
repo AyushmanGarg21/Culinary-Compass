@@ -1,87 +1,61 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { socialService } from '../../../services/api/socialService';
 
-// Simulate API call for followed users
-export const fetchFollowedUsers = createAsyncThunk('followedUsers/fetchFollowedUsers', async () => {
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return [
-    {
-      id: 1,
-      username: "John Doe",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-      foodPreference: "Vegan",
-      isOnline: true,
-      lastActive: "2024-01-15T10:30:00Z",
-      mutualFollowers: 5
-    },
-    {
-      id: 2,
-      username: "Jane Smith",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
-      foodPreference: "Vegetarian",
-      isOnline: false,
-      lastActive: "2024-01-14T15:45:00Z",
-      mutualFollowers: 8
-    },
-    {
-      id: 3,
-      username: "Ali Khan",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-      foodPreference: "Non-Vegetarian",
-      isOnline: true,
-      lastActive: "2024-01-15T09:20:00Z",
-      mutualFollowers: 3
-    },
-    {
-      id: 4,
-      username: "Maria Lopez",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-      foodPreference: "Vegan",
-      isOnline: false,
-      lastActive: "2024-01-13T18:20:00Z",
-      mutualFollowers: 12
-    },
-    {
-      id: 5,
-      username: "Akira Tanaka",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-      foodPreference: "Vegetarian",
-      isOnline: true,
-      lastActive: "2024-01-15T11:10:00Z",
-      mutualFollowers: 7
-    },
-    {
-      id: 6,
-      username: "Sarah Lee",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
-      foodPreference: "Vegan",
-      isOnline: false,
-      lastActive: "2024-01-14T20:30:00Z",
-      mutualFollowers: 15
+// ─── Thunks ───────────────────────────────────────────────────────────────────
+
+export const fetchFollowedUsers = createAsyncThunk(
+  'followedUsers/fetchFollowedUsers',
+  async ({ skip = 0, limit = 50 } = {}, { rejectWithValue }) => {
+    try {
+      return await socialService.getFollowing(skip, limit);
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to fetch following list');
     }
-  ];
-});
+  }
+);
 
-// Follow/Unfollow user
-export const toggleFollow = createAsyncThunk('followedUsers/toggleFollow', async (userId) => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return userId;
-});
+export const followUser = createAsyncThunk(
+  'followedUsers/followUser',
+  async (targetUserId, { rejectWithValue }) => {
+    try {
+      await socialService.followUser(targetUserId);
+      return targetUserId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to follow user');
+    }
+  }
+);
+
+export const unfollowUser = createAsyncThunk(
+  'followedUsers/unfollowUser',
+  async (targetUserId, { rejectWithValue }) => {
+    try {
+      await socialService.unfollowUser(targetUserId);
+      return targetUserId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to unfollow user');
+    }
+  }
+);
+
+// ─── Slice ────────────────────────────────────────────────────────────────────
 
 const followedUsersSlice = createSlice({
   name: 'followedUsers',
   initialState: {
     followedUsers: [],
+    total: 0,
     loading: false,
     error: null,
-    followingIds: []
+    followingIds: [],
   },
   reducers: {
     clearError: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
+    // fetchFollowedUsers
     builder
       .addCase(fetchFollowedUsers.pending, (state) => {
         state.loading = true;
@@ -89,25 +63,38 @@ const followedUsersSlice = createSlice({
       })
       .addCase(fetchFollowedUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.followedUsers = action.payload;
-        // Initialize all as followed
-        state.followingIds = action.payload.map(user => user.id);
+        state.followedUsers = action.payload.following ?? action.payload;
+        state.total = action.payload.total ?? state.followedUsers.length;
+        state.followingIds = state.followedUsers.map((u) => u.id);
       })
       .addCase(fetchFollowedUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
-      })
-      .addCase(toggleFollow.fulfilled, (state, action) => {
-        const userId = action.payload;
-        const index = state.followingIds.indexOf(userId);
-        if (index !== -1) {
-          state.followingIds.splice(index, 1);
-        } else {
-          state.followingIds.push(userId);
-        }
+        state.error = action.payload;
       });
-  }
+
+    // followUser
+    builder.addCase(followUser.fulfilled, (state, action) => {
+      if (!state.followingIds.includes(action.payload)) {
+        state.followingIds.push(action.payload);
+      }
+    });
+
+    // unfollowUser
+    builder.addCase(unfollowUser.fulfilled, (state, action) => {
+      state.followingIds = state.followingIds.filter((id) => id !== action.payload);
+      state.followedUsers = state.followedUsers.filter((u) => u.id !== action.payload);
+    });
+  },
 });
 
 export const { clearError } = followedUsersSlice.actions;
 export default followedUsersSlice.reducer;
+
+// Backward-compat alias — dispatches follow or unfollow based on current state
+export const toggleFollow = (targetUserId) => (dispatch, getState) => {
+  const { followingIds } = getState().followedUsers;
+  if (followingIds.includes(targetUserId)) {
+    return dispatch(unfollowUser(targetUserId));
+  }
+  return dispatch(followUser(targetUserId));
+};

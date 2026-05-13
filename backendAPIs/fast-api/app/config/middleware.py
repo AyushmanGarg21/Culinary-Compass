@@ -29,6 +29,12 @@ class AuthMiddleware:
         if not self.secret_key:
             raise ValueError("SECRET_KEY environment variable is not set")
         
+        self._allowed_origins = [
+            origin.strip()
+            for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+            if origin.strip()
+        ]
+
         self.public_routes = {
             "/health",
             "/docs",
@@ -36,6 +42,18 @@ class AuthMiddleware:
             "/openapi.json",
             "/auth"
         }
+
+    def _cors_headers(self, request: Request) -> dict:
+        """Return CORS headers matching the request origin, if allowed."""
+        origin = request.headers.get("origin", "")
+        if origin in self._allowed_origins or "*" in self._allowed_origins:
+            return {
+                "Access-Control-Allow-Origin": origin,
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+            }
+        return {}
 
     async def __call__(self, request: Request, call_next):
         """Process the request and validate authentication."""
@@ -49,7 +67,7 @@ class AuthMiddleware:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={"detail": "Missing authentication token"},
-                headers={"WWW-Authenticate": "Bearer"},
+                headers={"WWW-Authenticate": "Bearer", **self._cors_headers(request)},
             )
 
         auth_data = await self._validate_token(token)
@@ -58,7 +76,7 @@ class AuthMiddleware:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={"detail": "Invalid or expired token"},
-                headers={"WWW-Authenticate": "Bearer"},
+                headers={"WWW-Authenticate": "Bearer", **self._cors_headers(request)},
             )
 
         request.state.user_id = auth_data.get("user_id")

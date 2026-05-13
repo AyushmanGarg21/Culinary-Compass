@@ -103,10 +103,12 @@ export default function Header() {
   };
 
   const handleLogoutClick = () => {
-
     localStorage.removeItem('isLogin');
     localStorage.removeItem('role');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
     window.location.reload();
   };
 

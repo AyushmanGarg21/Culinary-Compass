@@ -1,29 +1,53 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { masterService } from '../../../services/api/masterService';
 
-// Use local JSON files as simulation/fallback for metadata
-import countriesData from '../../../../src/data/countries.json';
-import citiesData from '../../../../src/data/cities.json';
-import mealsData from '../../../../src/data/meals.json';
-import ingredientsData from '../../../../src/data/ingredients.json';
+export const fetchCountries = createAsyncThunk(
+  'meta/fetchCountries',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await masterService.getCountries();
+      return data.countries ?? data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to fetch countries');
+    }
+  }
+);
 
-// Helper to simulate network delay
-const simulateFetch = (data, delay = 300) => new Promise((resolve) => setTimeout(() => resolve(data), delay));
+export const fetchCities = createAsyncThunk(
+  'meta/fetchCities',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await masterService.getCities();
+      return data.cities ?? data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to fetch cities');
+    }
+  }
+);
 
-export const fetchCountries = createAsyncThunk('meta/fetchCountries', async () => {
-  return await simulateFetch(countriesData, 200);
-});
+export const fetchMeals = createAsyncThunk(
+  'meta/fetchMeals',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await masterService.getMeals();
+      return data.meals ?? data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to fetch meals');
+    }
+  }
+);
 
-export const fetchCities = createAsyncThunk('meta/fetchCities', async () => {
-  return await simulateFetch(citiesData, 200);
-});
-
-export const fetchMeals = createAsyncThunk('meta/fetchMeals', async () => {
-  return await simulateFetch(mealsData, 200);
-});
-
-export const fetchIngredients = createAsyncThunk('meta/fetchIngredients', async () => {
-  return await simulateFetch(ingredientsData, 200);
-});
+export const fetchIngredients = createAsyncThunk(
+  'meta/fetchIngredients',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await masterService.getIngredients();
+      return data.ingredients ?? data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to fetch ingredients');
+    }
+  }
+);
 
 const metaSlice = createSlice({
   name: 'meta',
@@ -38,22 +62,22 @@ const metaSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCountries.pending, (state) => { state.loading = true; })
+      .addCase(fetchCountries.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchCountries.fulfilled, (state, action) => { state.loading = false; state.countries = action.payload; })
-      .addCase(fetchCountries.rejected, (state, action) => { state.loading = false; state.error = action.error.message; })
+      .addCase(fetchCountries.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 
-      .addCase(fetchCities.pending, (state) => { state.loading = true; })
+      .addCase(fetchCities.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchCities.fulfilled, (state, action) => { state.loading = false; state.cities = action.payload; })
-      .addCase(fetchCities.rejected, (state, action) => { state.loading = false; state.error = action.error.message; })
+      .addCase(fetchCities.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 
-      .addCase(fetchMeals.pending, (state) => { state.loading = true; })
+      .addCase(fetchMeals.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchMeals.fulfilled, (state, action) => { state.loading = false; state.meals = action.payload; })
-      .addCase(fetchMeals.rejected, (state, action) => { state.loading = false; state.error = action.error.message; })
+      .addCase(fetchMeals.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 
-      .addCase(fetchIngredients.pending, (state) => { state.loading = true; })
+      .addCase(fetchIngredients.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchIngredients.fulfilled, (state, action) => { state.loading = false; state.ingredients = action.payload; })
-      .addCase(fetchIngredients.rejected, (state, action) => { state.loading = false; state.error = action.error.message; });
-  }
+      .addCase(fetchIngredients.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+  },
 });
 
 export default metaSlice.reducer;

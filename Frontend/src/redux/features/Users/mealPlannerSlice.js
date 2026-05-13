@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import mealsData from '../../../data/meals.json';
+import { masterService } from '../../../services/api/masterService';
 
-// Fake API calls
+// ─── Thunks ───────────────────────────────────────────────────────────────────
+
 export const fetchMealTypes = createAsyncThunk(
   'mealPlanner/fetchMealTypes',
   async () => {
@@ -23,28 +24,28 @@ export const fetchMealTypes = createAsyncThunk(
 
 export const fetchMealOptions = createAsyncThunk(
   'mealPlanner/fetchMealOptions',
-  async () => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Group meals by meal type from meals.json
-    const mealsByType = {};
-
-    mealsData.forEach(meal => {
-      const mealType = meal.meal_type;
-      if (!mealsByType[mealType]) {
-        mealsByType[mealType] = [];
-      }
-
-      mealsByType[mealType].push({
-        id: meal.id,
-        name: meal.meal_name,
-        calories: meal.calories,
-        image: meal.image
+  async (_, { rejectWithValue }) => {
+    try {
+      const meals = await masterService.getMeals();
+      // Group meals by meal_type to match the existing UI structure
+      const mealsByType = {};
+      const mealList = meals.meals ?? meals;
+      mealList.forEach((meal) => {
+        const mealType = meal.meal_type;
+        if (!mealsByType[mealType]) {
+          mealsByType[mealType] = [];
+        }
+        mealsByType[mealType].push({
+          id: meal.id,
+          name: meal.meal_name ?? meal.name,
+          calories: meal.calories,
+          image: meal.image ?? null,
+        });
       });
-    });
-
-    return mealsByType;
+      return mealsByType;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || 'Failed to fetch meal options');
+    }
   }
 );
 

@@ -11,7 +11,9 @@ import {
   Slide,
   IconButton,
   InputAdornment,
-  Chip
+  Chip,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Visibility,
@@ -27,6 +29,8 @@ import {
   FitnessCenter
 } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
+import { signin } from '../../redux/features/auth/authSlice';
+import { authService } from '../../services/api/authService';
 
 const BackgroundBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -216,6 +220,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setIsLoaded(true);
@@ -223,14 +229,47 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add login logic here
-    localStorage.setItem('isLogin', true);
-    localStorage.setItem('role', password);
-    localStorage.setItem('accessToken', '1234567890');
-    if (password === 'Admin') {
-            navigate('/manageusers'); // Redirect Admin to manage users page
-    } else {
-      navigate('/dashboard'); // Redirect User/Creator to dashboard
+    setLoading(true);
+    setError('');
+
+    try {
+      // Try user sign-in first; if the user is actually an admin, fall back to admin sign-in
+      let result;
+      let role;
+
+      try {
+        result = await authService.signin({ email, password });
+        const user = result.user;
+        role = user.is_admin ? 'Admin' : user.is_creator ? 'Creator' : 'User';
+      } catch (userErr) {
+        // If user sign-in returns 401/404, try admin sign-in
+        if (userErr.response?.status === 401 || userErr.response?.status === 404) {
+          result = await authService.adminSignin({ email, password });
+          role = 'Admin';
+        } else {
+          throw userErr;
+        }
+      }
+
+      // Persist tokens and session flags used by Layout / PrivateRoute / Header
+      localStorage.setItem('access_token', result.access_token);
+      localStorage.setItem('refresh_token', result.refresh_token);
+      localStorage.setItem('isLogin', 'true');
+      localStorage.setItem('role', role);
+      localStorage.setItem('user', JSON.stringify(result.user ?? result.admin));
+
+      // Also dispatch to Redux store
+      dispatch(signin.fulfilled(result, '', { email, password }));
+
+      if (role === 'Admin') {
+        navigate('/manageusers');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -425,6 +464,12 @@ const Login = () => {
               </Typography>
             </Box>
 
+            {error && (
+              <Alert severity="error" sx={{ borderRadius: '12px' }}>
+                {error}
+              </Alert>
+            )}
+
             <StyledTextField
               label="Email Address"
               variant="outlined"
@@ -475,8 +520,9 @@ const Login = () => {
               variant="contained"
               fullWidth
               size="large"
+              disabled={loading}
             >
-              Sign In ✨
+              {loading ? <CircularProgress size={22} color="inherit" /> : 'Sign In ✨'}
             </GradientButton>
 
             <Box
