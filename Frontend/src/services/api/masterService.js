@@ -1,38 +1,61 @@
 import apiClient from '../../utils/apiClient';
-
-const MASTER = '/api/v1/master';
+import { API_ENDPOINTS } from '../../config/api';
 
 export const masterService = {
-  getCountries: async (skip = 0, limit = 300) => {
-    const response = await apiClient.get(`${MASTER}/countries`, {
-      params: { skip, limit }
-    });
+  /**
+   * Get all countries
+   * @returns {Promise} - Array of { id, name, ... }
+   */
+  getCountries: async () => {
+    const response = await apiClient.get(API_ENDPOINTS.MASTER.COUNTRIES);
     return response.data.data;
   },
 
-  getCities: async (skip = 0, limit = 1000) => {
-    const response = await apiClient.get(`${MASTER}/cities`, {
-      params: { skip, limit }
-    });
-    return response.data.data;
-  },
-
+  /**
+   * Get cities for a specific country
+   * @param {number|string} countryId
+   * @returns {Promise} - Array of { id, name, ... }
+   */
   getCitiesByCountry: async (countryId) => {
-    const response = await apiClient.get(`${MASTER}/countries/${countryId}/cities`);
+    const response = await apiClient.get(API_ENDPOINTS.MASTER.CITIES_BY_COUNTRY(countryId));
     return response.data.data;
   },
 
-  getMeals: async (skip = 0, limit = 500) => {
-    const response = await apiClient.get(`${MASTER}/meals`, {
-      params: { skip, limit }
-    });
+  /**
+   * Get all ingredients
+   * @returns {Promise} - Array of { id, name, emoji, ingredient_type, ... }
+   */
+  getIngredients: async () => {
+    const response = await apiClient.get(API_ENDPOINTS.MASTER.INGREDIENTS);
     return response.data.data;
   },
 
-  getIngredients: async (skip = 0, limit = 500) => {
-    const response = await apiClient.get(`${MASTER}/ingredients`, {
-      params: { skip, limit }
-    });
+  /**
+   * Get ingredients filtered by type
+   * @param {string} type - ingredient type/category
+   * @returns {Promise} - Array of { id, name, emoji, ingredient_type, ... }
+   */
+  getIngredientsByType: async (type) => {
+    const response = await apiClient.get(API_ENDPOINTS.MASTER.INGREDIENTS_BY_TYPE(type));
     return response.data.data;
-  }
+  },
+
+  /**
+   * Get all master meals
+   * @returns {Promise} - Array of meal objects
+   */
+  getMeals: async () => {
+    const response = await apiClient.get(API_ENDPOINTS.MASTER.MEALS);
+    return response.data.data;
+  },
+
+  /**
+   * Get a single master meal by ID
+   * @param {number|string} mealId
+   * @returns {Promise} - meal object
+   */
+  getMealById: async (mealId) => {
+    const response = await apiClient.get(API_ENDPOINTS.MASTER.MEAL_BY_ID(mealId));
+    return response.data.data;
+  },
 };

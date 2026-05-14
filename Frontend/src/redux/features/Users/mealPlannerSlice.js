@@ -26,20 +26,26 @@ export const fetchMealOptions = createAsyncThunk(
   'mealPlanner/fetchMealOptions',
   async (_, { rejectWithValue }) => {
     try {
-      const meals = await masterService.getMeals();
-      // Group meals by meal_type to match the existing UI structure
+      const data = await masterService.getMeals();
+      const mealList = data?.meals ?? data ?? [];
+      // Group by meal_type — normalize to lowercase so keys match planner mealType keys
       const mealsByType = {};
-      const mealList = meals.meals ?? meals;
       mealList.forEach((meal) => {
-        const mealType = meal.meal_type;
-        if (!mealsByType[mealType]) {
-          mealsByType[mealType] = [];
-        }
+        const rawType = meal.meal_type || meal.mealType || 'other';
+        // "Midnight Snack" → "midnightSnack", "Afternoon Tea" → "afternoonTea", etc.
+        const mealType = rawType
+          .trim()
+          .split(/\s+/)
+          .map((word, i) =>
+            i === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          )
+          .join('');
+        if (!mealsByType[mealType]) mealsByType[mealType] = [];
         mealsByType[mealType].push({
           id: meal.id,
-          name: meal.meal_name ?? meal.name,
-          calories: meal.calories,
-          image: meal.image ?? null,
+          name: meal.meal_name || meal.name,
+          calories: meal.calories ?? 0,
+          image: meal.icon || meal.image || meal.image_url || null,
         });
       });
       return mealsByType;
@@ -144,9 +150,11 @@ export const saveMealPlan = createAsyncThunk(
 const initialState = {
   mealTypes: [],
   mealOptions: {},
+  allMeals: [],          // flat list — fallback when type-grouped lookup is empty
   currentWeekPlan: {},
   currentWeekOffset: 0,
   loading: false,
+  loadingMealOptions: false,
   saving: false,
   error: null,
   editingMeal: null,
@@ -196,14 +204,16 @@ const mealPlannerSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(fetchMealOptions.pending, (state) => {
-        state.loading = true;
+        state.loadingMealOptions = true;
       })
       .addCase(fetchMealOptions.fulfilled, (state, action) => {
-        state.loading = false;
+        state.loadingMealOptions = false;
         state.mealOptions = action.payload;
+        // Keep a flat list for fallback display
+        state.allMeals = Object.values(action.payload).flat();
       })
       .addCase(fetchMealOptions.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingMealOptions = false;
         state.error = action.error.message;
       })
       .addCase(fetchWeeklyPlan.pending, (state) => {

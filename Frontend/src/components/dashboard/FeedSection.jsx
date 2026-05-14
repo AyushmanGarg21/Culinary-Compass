@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 
 const FeedSection = ({ onViewPosts }) => {
@@ -26,7 +25,20 @@ const FeedSection = ({ onViewPosts }) => {
         </div>
       ) : (
         <div>
-          {topPosts.slice(0, 1).map((post, index) => (
+          {topPosts.slice(0, 1).map((post, index) => {
+            const authorName = post.username || post.author || 'Unknown';
+            const timeAgo = post.createdAt
+              ? (() => {
+                  const diffDays = Math.floor((Date.now() - new Date(post.createdAt)) / 86400000);
+                  if (diffDays === 0) return 'Today';
+                  if (diffDays === 1) return '1 day ago';
+                  return `${diffDays} days ago`;
+                })()
+              : post.timeAgo || '';
+            const content = post.overview || post.content || '';
+            const tags = post.tags || (post.cuisine_type ? [post.cuisine_type] : []);
+
+            return (
             <div
               key={post.id}
               className="p-4 border border-gray-200 rounded-xl hover:border-blue-300 transition-all duration-300 transform hover:scale-105 animate-fade-in"
@@ -36,39 +48,45 @@ const FeedSection = ({ onViewPosts }) => {
             >
               {/* Post Header */}
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full flex items-center justify-center text-white font-semibold">
-                  {post.author.charAt(0)}
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
+                  {post.profilePic
+                    ? <img src={post.profilePic} alt={authorName} className="w-full h-full object-cover" />
+                    : authorName.charAt(0).toUpperCase()
+                  }
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{post.author}</h3>
-                  <p className="text-xs text-gray-500">{post.timeAgo}</p>
+                  <h3 className="font-semibold text-gray-900">{authorName}</h3>
+                  <p className="text-xs text-gray-500">{timeAgo}</p>
                 </div>
               </div>
 
               {/* Post Content */}
               <div className="mb-3">
                 <h4 className="font-medium text-gray-900 mb-2">{post.title}</h4>
-                <p className="text-gray-700 text-sm line-clamp-3">{post.content}</p>
+                <p className="text-gray-700 text-sm line-clamp-3">{content}</p>
               </div>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-2 mb-3">
-                {post.tags.map((tag, tagIndex) => (
-                  <span
-                    key={tagIndex}
-                    className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {tags.map((tag, tagIndex) => (
+                    <span
+                      key={tagIndex}
+                      className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* Post Stats - Simplified */}
               <div className="text-right">
-                <span className="text-xs text-gray-400">{post.timeAgo}</span>
+                <span className="text-xs text-gray-400">{timeAgo}</span>
               </div>
             </div>
-          ))}
+            );
+          })}
           
           {/* Show more indicator if there are more posts */}
           {topPosts.length > 1 && (

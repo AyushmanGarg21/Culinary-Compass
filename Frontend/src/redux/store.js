@@ -13,6 +13,8 @@ import postsReducer from './features/Posts/postsSlice';
 import followedUsersReducer from './features/FollowedUsers/followedUsersSlice';
 import messagesReducer from './features/Messages/messagesSlice';
 import metaReducer from './features/utils/metaSlice';
+import profileReducer from './features/Users/profileSlice';
+import masterReducer from './features/utils/masterSlice';
 
 
 const store = configureStore({
@@ -29,6 +31,8 @@ const store = configureStore({
         followedUsers: followedUsersReducer,
         messages: messagesReducer,
         meta: metaReducer,
+        profile: profileReducer,
+        master: masterReducer,
 
         // [studentsApi.reducerPath]: studentsApi.reducer,
     },

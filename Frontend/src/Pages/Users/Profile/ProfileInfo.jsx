@@ -1,300 +1,295 @@
 // ProfileInfo.jsx
-import React, { useState } from 'react';
-import { 
-  TextField, 
-  Grid, 
-  MenuItem, 
-  Paper, 
-  Typography, 
-  Grow,
-  Tooltip 
-} from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  Visibility,
-  VisibilityOff,
+  TextField,
+  Grid,
+  MenuItem,
+  Paper,
+  Grow,
+  CircularProgress,
+  InputAdornment,
+} from '@mui/material';
+import {
   Person,
   Email,
   Phone,
   Public,
   Language,
-  Restaurant,
   Cake,
   FitnessCenter,
   Height,
   Wc,
-  CalendarToday,
   LocationCity,
-  AccountCircle,
-  Lock,
-  Info
 } from '@mui/icons-material';
+import {
+  fetchCountries,
+  fetchCitiesByCountry,
+} from '../../../redux/features/utils/masterSlice';
 
-const countries = ['United States', 'Canada', 'Australia', 'United Kingdom', 'Germany', 'India', 'France'];
 const genders = ['Male', 'Female', 'Other'];
 
+// Fields to render in the grid (dateOfBirth, password, foodPreference excluded)
+const FIELD_ORDER = [
+  'email', 'phone', 'country', 'city',
+  'language', 'gender',
+  'age', 'weight', 'height',
+];
+
+const getFieldIcon = (key) => {
+  const iconMap = {
+    email: <Email />,
+    phone: <Phone />,
+    country: <Public />,
+    city: <LocationCity />,
+    language: <Language />,
+    age: <Cake />,
+    weight: <FitnessCenter />,
+    height: <Height />,
+    gender: <Wc />,
+  };
+  return iconMap[key] || <Person />;
+};
+
+const getFieldLabel = (key) => {
+  const labelMap = {
+    email: 'Email Address',
+    phone: 'Phone Number',
+    country: 'Country',
+    city: 'City',
+    language: 'Language',
+    age: 'Age',
+    weight: 'Weight (kg)',
+    height: 'Height (cm)',
+    gender: 'Gender',
+  };
+  return labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
+};
+
 const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
-
-  const filteredCountries = countries.filter(country =>
-    country.toLowerCase().includes(searchTerm.toLowerCase())
+  const dispatch = useDispatch();
+  const { countries, citiesByCountry, loadingCountries, loadingCities } = useSelector(
+    (state) => state.master
   );
 
-  const getFieldIcon = (key) => {
-    const iconMap = {
-      name: <Person />,
-      email: <Email />,
-      phone: <Phone />,
-      country: <Public />,
-      language: <Language />,
-      foodPreference: <Restaurant />,
-      age: <Cake />,
-      weight: <FitnessCenter />,
-      height: <Height />,
-      gender: <Wc />,
-      dateOfBirth: <CalendarToday />,
-      city: <LocationCity />,
-      username: <AccountCircle />,
-      password: <Lock />,
-      aboutMe: <Info />
-    };
-    return iconMap[key] || <Person />;
+  // Fetch countries once on mount
+  useEffect(() => {
+    if (countries.length === 0) {
+      dispatch(fetchCountries());
+    }
+  }, [dispatch, countries.length]);
+
+  // When the selected country changes, fetch its cities (use cache if available)
+  const selectedCountryId = profileData.countryId;
+  useEffect(() => {
+    if (selectedCountryId && !citiesByCountry[selectedCountryId]) {
+      dispatch(fetchCitiesByCountry(selectedCountryId));
+    }
+  }, [dispatch, selectedCountryId, citiesByCountry]);
+
+  const currentCities = citiesByCountry[selectedCountryId] || [];
+
+  const handleCountryChange = (e) => {
+    const countryId = e.target.value;
+    const countryObj = countries.find((c) => c.id === countryId);
+    setProfileData({
+      ...profileData,
+      countryId,
+      country: countryObj?.name || '',
+      // Reset city when country changes
+      cityId: '',
+      city: '',
+    });
   };
 
-  const getFieldLabel = (key) => {
-    const labelMap = {
-      name: 'Full Name',
-      email: 'Email Address',
-      phone: 'Phone Number',
-      country: 'Country',
-      language: 'Language',
-      foodPreference: 'Food Preference',
-      age: 'Age',
-      weight: 'Weight (kg)',
-      height: 'Height (cm)',
-      gender: 'Gender',
-      dateOfBirth: 'Date of Birth',
-      city: 'City',
-      username: 'Username',
-      password: 'Password',
-      aboutMe: 'About Me'
+  const handleCityChange = (e) => {
+    const cityId = e.target.value;
+    const cityObj = currentCities.find((c) => c.id === cityId);
+    setProfileData({
+      ...profileData,
+      cityId,
+      city: cityObj?.name || '',
+    });
+  };
+
+  const commonInputSx = (key) => ({
+    backgroundColor: isEditing && key !== 'email' ? 'white' : '#f8f9fa',
+    borderRadius: 2,
+    transition: 'all 0.3s ease',
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    '&:hover': {
+      backgroundColor: isEditing && key !== 'email' ? '#ffffff' : '#f0f2f5',
+    },
+    '&.Mui-focused': {
+      backgroundColor: 'white',
+      boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.2)',
+    },
+  });
+
+  const commonFieldSx = {
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': { borderColor: isEditing ? 'primary.main' : 'grey.400' },
+    },
+    '& .MuiInputLabel-root': {
+      fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+      fontWeight: 500,
+    },
+  };
+
+  const renderField = (key, index) => {
+    const baseProps = {
+      label: getFieldLabel(key),
+      variant: 'outlined',
+      fullWidth: true,
+      InputProps: {
+        readOnly: key === 'email' ? true : !isEditing,
+        startAdornment: (
+          <InputAdornment position="start">{getFieldIcon(key)}</InputAdornment>
+        ),
+        sx: commonInputSx(key),
+      },
+      sx: commonFieldSx,
     };
-    return labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
+
+    // ── Country dropdown ──────────────────────────────────────────────────────
+    if (key === 'country') {
+      return (
+        <Grid item xs={12} sm={4} key={key}>
+          <Grow in={true} timeout={300 + index * 100}>
+            <TextField
+              {...baseProps}
+              select
+              value={profileData.countryId || ''}
+              onChange={handleCountryChange}
+              InputProps={{
+                ...baseProps.InputProps,
+                readOnly: !isEditing,
+                endAdornment: loadingCountries ? (
+                  <InputAdornment position="end">
+                    <CircularProgress size={16} />
+                  </InputAdornment>
+                ) : null,
+              }}
+            >
+              {countries.map((c) => (
+                <MenuItem key={c.id} value={c.id}>
+                  {c.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grow>
+        </Grid>
+      );
+    }
+
+    // ── City dropdown ─────────────────────────────────────────────────────────
+    if (key === 'city') {
+      return (
+        <Grid item xs={12} sm={4} key={key}>
+          <Grow in={true} timeout={300 + index * 100}>
+            <TextField
+              {...baseProps}
+              select
+              value={profileData.cityId || ''}
+              onChange={handleCityChange}
+              disabled={!profileData.countryId}
+              InputProps={{
+                ...baseProps.InputProps,
+                readOnly: !isEditing,
+                endAdornment: loadingCities ? (
+                  <InputAdornment position="end">
+                    <CircularProgress size={16} />
+                  </InputAdornment>
+                ) : null,
+              }}
+            >
+              {currentCities.length === 0 ? (
+                <MenuItem disabled value="">
+                  {profileData.countryId ? 'No cities available' : 'Select a country first'}
+                </MenuItem>
+              ) : (
+                currentCities.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {c.name}
+                  </MenuItem>
+                ))
+              )}
+            </TextField>
+          </Grow>
+        </Grid>
+      );
+    }
+
+    // ── Gender ────────────────────────────────────────────────────────────────
+    if (key === 'gender') {
+      return (
+        <Grid item xs={12} sm={4} key={key}>
+          <Grow in={true} timeout={300 + index * 100}>
+            <TextField
+              {...baseProps}
+              select
+              value={profileData[key]}
+              onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
+            >
+              {genders.map((g) => (
+                <MenuItem key={g} value={g}>{g}</MenuItem>
+              ))}
+            </TextField>
+          </Grow>
+        </Grid>
+      );
+    }
+
+    // ── Numeric fields ────────────────────────────────────────────────────────
+    if (['age', 'weight', 'height'].includes(key)) {
+      return (
+        <Grid item xs={12} sm={4} key={key}>
+          <Grow in={true} timeout={300 + index * 100}>
+            <TextField
+              {...baseProps}
+              type="number"
+              value={profileData[key]}
+              onChange={(e) => {
+                if (Number(e.target.value) >= 0) {
+                  setProfileData({ ...profileData, [key]: e.target.value });
+                }
+              }}
+            />
+          </Grow>
+        </Grid>
+      );
+    }
+
+    // ── Default text field ────────────────────────────────────────────────────
+    return (
+      <Grid item xs={12} sm={4} key={key}>
+        <Grow in={true} timeout={300 + index * 100}>
+          <TextField
+            {...baseProps}
+            value={profileData[key]}
+            onChange={(e) => {
+              if (key !== 'email') {
+                setProfileData({ ...profileData, [key]: e.target.value });
+              }
+            }}
+          />
+        </Grow>
+      </Grid>
+    );
   };
 
   return (
-    <Paper 
-      elevation={3} 
-      sx={{ 
-        p: 4, 
+    <Paper
+      elevation={3}
+      sx={{
+        p: 4,
         borderRadius: 3,
         background: 'linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%)',
-        boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+        boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
       }}
     >
       <Grid container spacing={3} className="w-full">
-      {Object.keys(profileData).filter(key => !['name', 'username', 'aboutMe'].includes(key)).map((key, index) => {
-        const commonProps = {
-          label: getFieldLabel(key),
-          variant: "outlined",
-          fullWidth: true,
-          value: profileData[key],
-          InputProps: {
-            readOnly: key === 'email' ? true : !isEditing,
-            startAdornment: (
-              <InputAdornment position="start">
-                {getFieldIcon(key)}
-              </InputAdornment>
-            ),
-            sx: {
-              backgroundColor: isEditing && key !== 'email' ? 'white' : '#f8f9fa',
-              borderRadius: 2,
-              transition: 'all 0.3s ease',
-              fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-              '&:hover': {
-                backgroundColor: isEditing && key !== 'email' ? '#ffffff' : '#f0f2f5',
-              },
-              '&.Mui-focused': {
-                backgroundColor: 'white',
-                boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.2)'
-              }
-            }
-          },
-          sx: {
-            '& .MuiOutlinedInput-root': {
-              '&:hover fieldset': {
-                borderColor: isEditing ? 'primary.main' : 'grey.400',
-              }
-            },
-            '& .MuiInputLabel-root': {
-              fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-              fontWeight: 500
-            }
-          }
-        };
-
-        if (key === 'foodPreference') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  select
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                >
-                  <MenuItem value="Vegetarian">🥗 Vegetarian</MenuItem>
-                  <MenuItem value="Non-Vegetarian">🍖 Non-Vegetarian</MenuItem>
-                  <MenuItem value="Vegan">🌱 Vegan</MenuItem>
-                </TextField>
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'country') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  select
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                  onInput={(e) => setSearchTerm(e.target.value)}
-                >
-                  {filteredCountries.map((country) => (
-                    <MenuItem key={country} value={country}>
-                      {country}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'age') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  type="number"
-                  onChange={(e) => {
-                    if (e.target.value >= 0) {
-                      setProfileData({ ...profileData, [key]: e.target.value });
-                    }
-                  }}
-                />
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'height') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  type="number"
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                />
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'weight') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  type="number"
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                />
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'gender') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  select
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                >
-                  {genders.map((gender) => (
-                    <MenuItem key={gender} value={gender}>
-                      {gender}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'dateOfBirth') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  type="date"
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                  slotProps={{ inputLabel: { shrink: true } }}
-                />
-              </Grow>
-            </Grid>
-          );
-        } else if (key === 'password') {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  type={showPassword ? 'text' : 'password'}
-                  onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
-                  slotProps={{
-                    input: {
-                      ...commonProps.InputProps,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Tooltip title={showPassword ? "Hide password" : "Show password"}>
-                            <IconButton
-                              onClick={handleClickShowPassword}
-                              edge="end"
-                              sx={{
-                                transition: 'transform 0.2s ease',
-                                '&:hover': {
-                                  transform: 'scale(1.1)'
-                                }
-                              }}
-                            >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </Tooltip>
-                        </InputAdornment>
-                      )
-                    }
-                  }}
-                />
-              </Grow>
-            </Grid>
-          );
-        } else {
-          return (
-            <Grid item xs={12} sm={4} key={key}>
-              <Grow in={true} timeout={300 + index * 100}>
-                <TextField
-                  {...commonProps}
-                  onChange={(e) => {
-                    if (key !== 'email') {
-                      setProfileData({ ...profileData, [key]: e.target.value });
-                    }
-                  }}
-                />
-              </Grow>
-            </Grid>
-          );
-        }
-      })}
+        {FIELD_ORDER.map((key, index) => renderField(key, index))}
       </Grid>
     </Paper>
   );

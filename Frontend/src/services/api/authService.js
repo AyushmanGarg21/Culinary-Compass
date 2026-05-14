@@ -60,5 +60,29 @@ export const authService = {
       refresh_token: refreshToken
     });
     return response.data.data;
+  },
+
+  /**
+   * Update current user profile
+   * @param {Object} data - profile fields to update
+   * @returns {Promise} - updated User object
+   */
+  updateProfile: async (data) => {
+    const response = await apiClient.put(API_ENDPOINTS.USER.UPDATE_PROFILE, data);
+    return response.data.data;
+  },
+
+  /**
+   * Upload profile picture
+   * @param {File} file - image file
+   * @returns {Promise} - updated User object
+   */
+  uploadProfilePicture: async (file) => {
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    const response = await apiClient.put(API_ENDPOINTS.USER.UPDATE_PROFILE, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data.data;
   }
 };

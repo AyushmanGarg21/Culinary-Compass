@@ -1,5 +1,6 @@
 // Profile.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   Avatar,
@@ -25,98 +26,131 @@ import {
 } from '@mui/icons-material';
 import ProfileInfo from './ProfileInfo';
 import CreatorFormModal from '../../../components/CreatorFormModal';
+import LoadingSpinner from '../../../components/common/LoadingSpinner';
+import {
+  fetchProfile,
+  updateProfile,
+  uploadProfilePicture,
+  clearMessages,
+} from '../../../redux/features/Users/profileSlice';
+import { fetchCitiesByCountry } from '../../../redux/features/utils/masterSlice';
+
+// Map API field names → local profileData keys
+const apiToForm = (user) => ({
+  name: user.name || user.full_name || '',
+  email: user.email || '',
+  phone: user.phone_no || user.phone || '',
+  countryId: user.country_id || '',
+  country: user.country || '',
+  language: user.language || '',
+  gender: user.gender || '',
+  age: user.age != null ? String(user.age) : '',
+  weight: user.weight != null ? String(user.weight) : '',
+  height: user.height != null ? String(user.height) : '',
+  cityId: user.city_id || '',
+  city: user.city || '',
+  aboutMe: user.about_me || '',
+});
+
+// Map local profileData keys → API payload (exact schema)
+const formToApi = (form) => {
+  const payload = {
+    name: form.name || undefined,
+    phone_no: form.phone || undefined,
+    country_id: form.countryId ? Number(form.countryId) : undefined,
+    city_id: form.cityId ? Number(form.cityId) : undefined,
+    gender: form.gender || undefined,
+    language: form.language || undefined,
+    age: form.age ? Number(form.age) : undefined,
+    height: form.height ? Number(form.height) : undefined,
+    weight: form.weight ? Number(form.weight) : undefined,
+    about_me: form.aboutMe || undefined,
+  };
+  // Remove undefined keys
+  return Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined));
+};
 
 const Profile = () => {
+  const dispatch = useDispatch();
+  const { data: user, loading, saving, uploadingPicture, error, saveError, successMessage } =
+    useSelector((state) => state.profile);
+
   const role = localStorage.getItem('role');
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [showProfileUpdateMessage, setShowProfileUpdateMessage] = useState(false);
   const fileInputRef = useRef(null);
+
   const [profileData, setProfileData] = useState({
-    name: 'Dummy Name',
-    email: 'dummy@example.com',
-    phone: '123-456-7890',
+    name: '',
+    email: '',
+    phone: '',
+    countryId: '',
     country: '',
-    language: 'English',
-    foodPreference: 'Vegetarian',
-    age: '25',
-    weight: '70',
-    height: '175',
+    language: '',
     gender: '',
-    dateOfBirth: '',
+    age: '',
+    weight: '',
+    height: '',
+    cityId: '',
     city: '',
-    password: '',
-    aboutMe: 'I am a passionate individual who loves exploring new technologies and creating meaningful connections. Always eager to learn and grow!',
+    aboutMe: '',
   });
 
-  // Toggle modal visibility
+  // Load profile on mount
+  useEffect(() => {
+    dispatch(fetchProfile());
+  }, [dispatch]);
+
+  // Populate form when API data arrives; also pre-fetch cities for the saved country
+  useEffect(() => {
+    if (user) {
+      const formData = apiToForm(user);
+      setProfileData(formData);
+      if (formData.countryId) {
+        dispatch(fetchCitiesByCountry(formData.countryId));
+      }
+    }
+  }, [user, dispatch]);
+
+  // Auto-clear messages after snackbar closes
+  const handleCloseSnackbar = () => {
+    dispatch(clearMessages());
+  };
+
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  // Handle edit toggle
   const toggleEdit = () => {
-    setIsEditing(!isEditing);
+    if (isEditing && user) {
+      // Cancel — reset to server data
+      setProfileData(apiToForm(user));
+    }
+    setIsEditing((prev) => !prev);
   };
 
-  // Handle update data
-  const handleUpdate = () => {
-    // Fake API call
-    console.log('Updating data...', profileData);
-    setIsEditing(false);
-    setShowProfileUpdateMessage(true);
-
-    // In real implementation, you would call your API here:
-    // updateProfile(profileData).then(() => {
-    //   setIsEditing(false);
-    //   setShowProfileUpdateMessage(true);
-    // }).catch(() => {
-    //   // Handle error
-    // });
-  };
-
-  // Handle profile image upload
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setIsUploading(true);
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        // Simulate API call delay
-        setTimeout(() => {
-          setProfileImage(e.target.result);
-          setIsUploading(false);
-          setShowSuccessMessage(true);
-
-          // In real implementation, you would call your API here:
-          // uploadProfileImage(file).then(() => {
-          //   setProfileImage(e.target.result);
-          //   setIsUploading(false);
-          //   setShowSuccessMessage(true);
-          // }).catch(() => {
-          //   setIsUploading(false);
-          //   // Handle error
-          // });
-        }, 2000); // 2 second delay to simulate upload
-      };
-      reader.readAsDataURL(file);
+  const handleUpdate = async () => {
+    const result = await dispatch(updateProfile(formToApi(profileData)));
+    if (!result.error) {
+      setIsEditing(false);
     }
   };
 
-  const handleCloseSuccessMessage = () => {
-    setShowSuccessMessage(false);
-  };
-
-  const handleCloseProfileUpdateMessage = () => {
-    setShowProfileUpdateMessage(false);
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      dispatch(uploadProfilePicture(file));
+    }
   };
 
   const handleAvatarClick = () => {
-    fileInputRef.current?.click();
+    if (!uploadingPicture) fileInputRef.current?.click();
   };
+
+  if (loading && !user) {
+    return <LoadingSpinner />;
+  }
+
+  const profilePicSrc = user?.profile_picture || user?.profilePic || null;
 
   return (
     <div className="p-3 sm:p-6 w-full min-h-[95vh] bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -142,13 +176,8 @@ const Profile = () => {
                   boxShadow: '0 4px 20px rgba(156, 39, 176, 0.3)',
                   transition: 'all 0.3s ease',
                   width: { xs: '100%', sm: 'auto' },
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 6px 25px rgba(156, 39, 176, 0.4)'
-                  },
-                  '&:disabled': {
-                    opacity: 0.6
-                  }
+                  '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 6px 25px rgba(156, 39, 176, 0.4)' },
+                  '&:disabled': { opacity: 0.6 }
                 }}
               >
                 Become a Creator
@@ -158,7 +187,7 @@ const Profile = () => {
 
           <Tooltip title={isEditing ? 'Cancel editing' : 'Edit your profile'}>
             <Button
-              variant={isEditing ? "outlined" : "contained"}
+              variant={isEditing ? 'outlined' : 'contained'}
               color="primary"
               onClick={toggleEdit}
               startIcon={isEditing ? <CancelIcon /> : <EditIcon />}
@@ -189,7 +218,8 @@ const Profile = () => {
                 variant="contained"
                 color="success"
                 onClick={handleUpdate}
-                startIcon={<SaveIcon />}
+                disabled={saving}
+                startIcon={saving ? <CircularProgress size={18} color="inherit" /> : <SaveIcon />}
                 sx={{
                   borderRadius: '25px',
                   px: { xs: 2, sm: 4 },
@@ -201,18 +231,22 @@ const Profile = () => {
                   boxShadow: '0 4px 20px rgba(46, 125, 50, 0.3)',
                   transition: 'all 0.3s ease',
                   width: { xs: '100%', sm: 'auto' },
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 6px 25px rgba(46, 125, 50, 0.4)'
-                  }
+                  '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 6px 25px rgba(46, 125, 50, 0.4)' }
                 }}
               >
-                Save Changes
+                {saving ? 'Saving…' : 'Save Changes'}
               </Button>
             </Tooltip>
           )}
         </div>
       </Slide>
+
+      {/* API error banner */}
+      {(error || saveError) && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={handleCloseSnackbar}>
+          {error || saveError}
+        </Alert>
+      )}
 
       {/* Main Profile Content */}
       <Fade in={true} timeout={800}>
@@ -234,24 +268,17 @@ const Profile = () => {
               }}
             >
               <div className="relative">
-                {/* Upload Progress Ring */}
-                {isUploading && (
+                {uploadingPicture && (
                   <CircularProgress
                     size={140}
                     thickness={3}
-                    sx={{
-                      position: 'absolute',
-                      top: -10,
-                      left: -10,
-                      color: '#4caf50',
-                      zIndex: 1
-                    }}
+                    sx={{ position: 'absolute', top: -10, left: -10, color: '#4caf50', zIndex: 1 }}
                   />
                 )}
 
                 <Avatar
-                  src={profileImage}
-                  onClick={!isUploading ? handleAvatarClick : undefined}
+                  src={profilePicSrc}
+                  onClick={handleAvatarClick}
                   sx={{
                     width: { xs: 100, sm: 120 },
                     height: { xs: 100, sm: 120 },
@@ -259,25 +286,21 @@ const Profile = () => {
                     fontSize: { xs: '2.5rem', sm: '3rem' },
                     boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                     transition: 'all 0.3s ease-in-out',
-                    cursor: isUploading ? 'default' : 'pointer',
-                    opacity: isUploading ? 0.7 : 1,
-                    '&:hover': !isUploading ? {
+                    cursor: uploadingPicture ? 'default' : 'pointer',
+                    opacity: uploadingPicture ? 0.7 : 1,
+                    '&:hover': !uploadingPicture ? {
                       transform: 'scale(1.05)',
                       boxShadow: '0 12px 40px rgba(0,0,0,0.15)'
                     } : {}
                   }}
                 >
-                  {!profileImage && <PersonIcon fontSize="large" />}
+                  {!profilePicSrc && <PersonIcon fontSize="large" />}
                 </Avatar>
 
-                {/* Camera Icon */}
                 <div
                   className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 shadow-lg cursor-pointer hover:bg-blue-600 transition-colors"
-                  onClick={!isUploading ? handleAvatarClick : undefined}
-                  style={{
-                    opacity: isUploading ? 0.7 : 1,
-                    cursor: isUploading ? 'default' : 'pointer'
-                  }}
+                  onClick={handleAvatarClick}
+                  style={{ opacity: uploadingPicture ? 0.7 : 1, cursor: uploadingPicture ? 'default' : 'pointer' }}
                 >
                   <CameraIcon sx={{ color: 'white', fontSize: '1.2rem' }} />
                 </div>
@@ -322,16 +345,12 @@ const Profile = () => {
                       textAlign: 'center'
                     }}
                   >
-                    {profileData.name}
+                    {profileData.name || 'Your Name'}
                   </Typography>
                 )}
                 <Typography
                   variant="subtitle1"
-                  sx={{
-                    color: '#666',
-                    fontWeight: 500,
-                    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif'
-                  }}
+                  sx={{ color: '#666', fontWeight: 500, fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif' }}
                 >
                   ({role})
                 </Typography>
@@ -352,11 +371,7 @@ const Profile = () => {
                 <InfoIcon sx={{ color: 'primary.main' }} />
                 <Typography
                   variant="h6"
-                  sx={{
-                    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-                    fontWeight: 600,
-                    color: '#333'
-                  }}
+                  sx={{ fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif', fontWeight: 600, color: '#333' }}
                 >
                   About Me
                 </Typography>
@@ -366,7 +381,7 @@ const Profile = () => {
                 value={profileData.aboutMe}
                 onChange={(e) => setProfileData({ ...profileData, aboutMe: e.target.value })}
                 multiline
-                rows={{ xs: 3, sm: 4 }}
+                rows={4}
                 fullWidth
                 variant="outlined"
                 placeholder="Share something interesting about yourself..."
@@ -378,20 +393,13 @@ const Profile = () => {
                     transition: 'all 0.3s ease',
                     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
                     fontSize: { xs: '0.875rem', sm: '1rem' },
-                    '&:hover': {
-                      backgroundColor: isEditing ? '#ffffff' : '#f0f2f5',
-                    },
-                    '&.Mui-focused': {
-                      backgroundColor: 'white',
-                      boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.2)'
-                    }
+                    '&:hover': { backgroundColor: isEditing ? '#ffffff' : '#f0f2f5' },
+                    '&.Mui-focused': { backgroundColor: 'white', boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.2)' }
                   }
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': {
-                      borderColor: isEditing ? 'primary.main' : 'grey.400',
-                    }
+                    '&:hover fieldset': { borderColor: isEditing ? 'primary.main' : 'grey.400' }
                   }
                 }}
               />
@@ -411,59 +419,21 @@ const Profile = () => {
 
       <CreatorFormModal open={isModalOpen} handleClose={handleModalClose} />
 
-      {/* Profile Picture Success Message */}
+      {/* Success Snackbar */}
       <Snackbar
-        open={showSuccessMessage}
+        open={!!successMessage}
         autoHideDuration={4000}
-        onClose={handleCloseSuccessMessage}
+        onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{
-          '& .MuiSnackbar-root': {
-            left: { xs: '16px', sm: 'auto' },
-            right: { xs: '16px', sm: 'auto' },
-            width: { xs: 'calc(100% - 32px)', sm: 'auto' }
-          }
-        }}
       >
         <Alert
-          onClose={handleCloseSuccessMessage}
+          onClose={handleCloseSnackbar}
           severity="success"
           variant="filled"
           icon={<CheckIcon />}
-          sx={{
-            fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-            fontWeight: 500
-          }}
+          sx={{ fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif', fontWeight: 500 }}
         >
-          Profile picture updated successfully!
-        </Alert>
-      </Snackbar>
-
-      {/* Profile Update Success Message */}
-      <Snackbar
-        open={showProfileUpdateMessage}
-        autoHideDuration={4000}
-        onClose={handleCloseProfileUpdateMessage}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{
-          '& .MuiSnackbar-root': {
-            left: { xs: '16px', sm: 'auto' },
-            right: { xs: '16px', sm: 'auto' },
-            width: { xs: 'calc(100% - 32px)', sm: 'auto' }
-          }
-        }}
-      >
-        <Alert
-          onClose={handleCloseProfileUpdateMessage}
-          severity="success"
-          variant="filled"
-          icon={<CheckIcon />}
-          sx={{
-            fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-            fontWeight: 500
-          }}
-        >
-          Profile updated successfully!
+          {successMessage}
         </Alert>
       </Snackbar>
     </div>

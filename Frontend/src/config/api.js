@@ -53,6 +53,20 @@ export const API_ENDPOINTS = {
     CREATOR_POST: '/api/v1/users/requests/creator-post'
   },
   
+  // Master Data
+  MASTER: {
+    COUNTRIES: '/api/v1/master/countries',
+    COUNTRY_BY_ID: (id) => `/api/v1/master/countries/${id}`,
+    CITIES: '/api/v1/master/cities',
+    CITY_BY_ID: (id) => `/api/v1/master/cities/${id}`,
+    CITIES_BY_COUNTRY: (countryId) => `/api/v1/master/countries/${countryId}/cities`,
+    INGREDIENTS: '/api/v1/master/ingredients',
+    INGREDIENT_BY_ID: (id) => `/api/v1/master/ingredients/${id}`,
+    INGREDIENTS_BY_TYPE: (type) => `/api/v1/master/ingredients/type/${type}`,
+    MEALS: '/api/v1/master/meals',
+    MEAL_BY_ID: (id) => `/api/v1/master/meals/${id}`,
+  },
+
   // Admin
   ADMIN: {
     CREATOR_REQUESTS: '/api/v1/admin/creator-requests',
