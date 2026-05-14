@@ -28,9 +28,8 @@ import {
   People,
   FitnessCenter
 } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
-import { signin } from '../../redux/features/auth/authSlice';
-import { authService } from '../../services/api/authService';
+import { useDispatch, useSelector } from 'react-redux';
+import { signin, adminSignin, clearError } from '../../redux/features/auth/authSlice';
 
 const BackgroundBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -215,12 +214,12 @@ const FloatingElement = styled(Box)(({ theme }) => ({
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { loading, error: reduxError } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -229,47 +228,38 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
 
-    try {
-      // Try user sign-in first; if the user is actually an admin, fall back to admin sign-in
-      let result;
-      let role;
+    // Try user signin first; fall back to admin signin on 401/404
+    let result = await dispatch(signin({ email, password }));
 
-      try {
-        result = await authService.signin({ email, password });
-        const user = result.user;
-        role = user.is_admin ? 'Admin' : user.is_creator ? 'Creator' : 'User';
-      } catch (userErr) {
-        // If user sign-in returns 401/404, try admin sign-in
-        if (userErr.response?.status === 401 || userErr.response?.status === 404) {
-          result = await authService.adminSignin({ email, password });
-          role = 'Admin';
-        } else {
-          throw userErr;
-        }
-      }
+    if (result.error) {
+      // User signin failed — try admin signin
+      result = await dispatch(adminSignin({ email, password }));
+    }
 
-      // Persist tokens and session flags used by Layout / PrivateRoute / Header
-      localStorage.setItem('access_token', result.access_token);
-      localStorage.setItem('refresh_token', result.refresh_token);
-      localStorage.setItem('isLogin', 'true');
-      localStorage.setItem('role', role);
-      localStorage.setItem('user', JSON.stringify(result.user ?? result.admin));
+    if (result.error) {
+      setError(result.payload || 'Invalid email or password');
+      return;
+    }
 
-      // Also dispatch to Redux store
-      dispatch(signin.fulfilled(result, '', { email, password }));
+    // Derive role from the returned payload and persist legacy keys
+    // that Layout / PrivateRoute / App still read from localStorage
+    const payload = result.payload;
+    const user = payload.user ?? payload.admin;
+    const role = payload.admin
+      ? 'Admin'
+      : user?.is_creator
+      ? 'Creator'
+      : 'User';
 
-      if (role === 'Admin') {
-        navigate('/manageusers');
-      } else {
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid email or password');
-    } finally {
-      setLoading(false);
+    localStorage.setItem('isLogin', 'true');
+    localStorage.setItem('role', role);
+
+    if (role === 'Admin') {
+      navigate('/manageusers');
+    } else {
+      navigate('/dashboard');
     }
   };
 

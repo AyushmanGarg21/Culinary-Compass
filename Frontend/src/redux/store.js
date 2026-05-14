@@ -12,6 +12,7 @@ import dashboardReducer from './features/Users/dashboardSlice';
 import postsReducer from './features/Posts/postsSlice';
 import followedUsersReducer from './features/FollowedUsers/followedUsersSlice';
 import messagesReducer from './features/Messages/messagesSlice';
+import userRequestReducer from './features/Users/userRequestSlice';
 import metaReducer from './features/utils/metaSlice';
 import profileReducer from './features/Users/profileSlice';
 import masterReducer from './features/utils/masterSlice';
@@ -30,6 +31,7 @@ const store = configureStore({
         posts: postsReducer,
         followedUsers: followedUsersReducer,
         messages: messagesReducer,
+        userRequests: userRequestReducer,
         meta: metaReducer,
         profile: profileReducer,
         master: masterReducer,

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFollow } from '../../redux/features/FollowedUsers/followedUsersSlice';
 import { 
   PersonAddAlt1Rounded as PersonAddAlt1RoundedIcon, 
   PersonRemoveRounded as PersonRemoveRoundedIcon,
@@ -11,11 +11,15 @@ import {
 import { Chip, IconButton, Tooltip, Fade } from '@mui/material';
 
 const UserCard = ({ id }) => {
-  const [isFollowing, setIsFollowing] = useState(false);
-  
+  const dispatch = useDispatch();
+
   // Fetch user data from Redux store
   const user = useSelector((state) =>
     state.users.users.find((user) => user.id === id)
+  );
+
+  const isFollowing = useSelector((state) =>
+    state.followedUsers.followingIds.includes(id)
   );
 
   if (!user) {
@@ -28,7 +32,7 @@ const UserCard = ({ id }) => {
   }
 
   const handleFollow = () => {
-    setIsFollowing(!isFollowing);
+    dispatch(toggleFollow(id));
   };
 
   const getFoodPreferenceColor = (preference) => {

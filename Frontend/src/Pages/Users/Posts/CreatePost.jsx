@@ -33,8 +33,12 @@ import {
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './CSS/CreatePost.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { submitCreatorPost } from '../../../redux/features/Users/userRequestSlice';
 
 const CreatePost = () => {
+  const dispatch = useDispatch();
+  const { submitting: isSubmitting } = useSelector((state) => state.userRequests);
   const [activeStep, setActiveStep] = useState(0);
   const [overview, setOverview] = useState('');
   const [title, setTitle] = useState('');
@@ -45,7 +49,6 @@ const CreatePost = () => {
   const [keywords, setKeywords] = useState([]);
   const [currentKeyword, setCurrentKeyword] = useState('');
   const [details, setDetails] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -122,39 +125,32 @@ const CreatePost = () => {
   };
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
-
-    const postData = {
+    const payload = {
       title,
       overview,
-      cookingTime,
+      cooking_time: cookingTime,
       servings,
-      image: imageFile,
-      keywords,
-      details
+      ingredients: keywords,
+      instructions: details,
     };
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    console.log("Data submitted:", postData);
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setShowSuccess(true);
-
-    // Reset form after success
-    setTimeout(() => {
-      setTitle('');
-      setOverview('');
-      setCookingTime('');
-      setServings('');
-      setImage(null);
-      setImageFile(null);
-      setKeywords([]);
-      setDetails('');
-      setActiveStep(0);
-      setIsSubmitted(false);
-    }, 3000);
+    const result = await dispatch(submitCreatorPost(payload));
+    if (!result.error) {
+      setIsSubmitted(true);
+      setShowSuccess(true);
+      setTimeout(() => {
+        setTitle('');
+        setOverview('');
+        setCookingTime('');
+        setServings('');
+        setImage(null);
+        setImageFile(null);
+        setKeywords([]);
+        setDetails('');
+        setActiveStep(0);
+        setIsSubmitted(false);
+      }, 3000);
+    }
   };
 
   const renderStepContent = () => {

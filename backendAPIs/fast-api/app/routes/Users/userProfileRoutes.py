@@ -1,5 +1,5 @@
 """API routes for user profile operations."""
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, UploadFile, File
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -97,3 +97,32 @@ async def update_user_password(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred"
         )
+
+
+@router.post("/picture")
+async def upload_profile_picture(
+    request: Request,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+) -> JSONResponse:
+    """Upload profile picture. Stores as base64 in the profile_pic field."""
+    try:
+        import base64
+        user_id = request.state.user_id
+        content = await file.read()
+        if len(content) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File too large. Max 5MB.")
+        mime = file.content_type or "image/jpeg"
+        b64 = base64.b64encode(content).decode("utf-8")
+        data_url = f"data:{mime};base64,{b64}"
+        user = UserProfileService.update_user_profile(
+            db, user_id, type('obj', (object,), {'profile_pic': data_url, '__dict__': {'profile_pic': data_url}})()
+        )
+        return ResponseHelper.ok_response(
+            data={"profile_pic": data_url},
+            message="Profile picture updated successfully"
+        )
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to upload profile picture")

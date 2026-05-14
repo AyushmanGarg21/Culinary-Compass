@@ -30,12 +30,12 @@ const CreatorRequest = () => {
   };
 
   const handleApprove = (id) => {
-    dispatch(approvePostRequest(id));
+    dispatch(approvePostRequest({ id, comments: '' }));
     handleClosePopup();
   };
 
   const handleReject = (id) => {
-    dispatch(rejectPostRequest(id));
+    dispatch(rejectPostRequest({ id, comments: '' }));
     handleClosePopup();
   };
 

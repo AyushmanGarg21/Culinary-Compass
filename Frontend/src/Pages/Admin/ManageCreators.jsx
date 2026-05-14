@@ -1,7 +1,7 @@
 // ManageCreators.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCreators } from '../../redux/features/Admin/manageSlice';
+import { fetchCreators, removeFromCreator, deactivateUser, activateUser } from '../../redux/features/Admin/manageSlice';
 import ManageCard from '../../components/Admin/ManageCard';
 import { TextField ,InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -92,9 +92,10 @@ const ManageCreators = () => {
                   phone={creator.phone}
                   email={creator.email}
                   role="creator"
-                  onDelete={() => console.log(`Delete ${creator.id}`)}
-                  onDeactivate={() => console.log(`Deactivate ${creator.id}`)}
-                  onRemoveFromCreator={() => console.log(`Remove from Creator ${creator.id}`)}
+                  onDelete={() => dispatch(deactivateUser(creator.id))}
+                  onDeactivate={() => dispatch(deactivateUser(creator.id))}
+                  onActivate={() => dispatch(activateUser(creator.id))}
+                  onRemoveFromCreator={() => dispatch(removeFromCreator(creator.id))}
                 />
               ))
             )}

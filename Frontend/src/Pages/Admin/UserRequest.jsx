@@ -29,12 +29,12 @@ const UserRequest = () => {
   };
 
   const handleAccept = (id) => {
-    dispatch(acceptUserRequest(id));
+    dispatch(acceptUserRequest({ id, comments: '' }));
     handleClosePopup();
   };
 
   const handleDecline = (id) => {
-    dispatch(declineUserRequest(id));
+    dispatch(declineUserRequest({ id, comments: '' }));
     handleClosePopup();
   };
 

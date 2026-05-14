@@ -15,8 +15,12 @@ import {
   Stepper,
   Step,
   StepLabel,
-  LinearProgress
+  LinearProgress,
+  Alert,
+  CircularProgress
 } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { signup } from '../../redux/features/auth/authSlice';
 import {
   Visibility,
   VisibilityOff,
@@ -216,6 +220,8 @@ const FloatingElement = styled(Box)(({ theme }) => ({
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -226,6 +232,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setIsLoaded(true);
@@ -249,12 +256,24 @@ const Register = () => {
     }));
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // Add registration logic here
-    localStorage.setItem('isLogin', true);
+    setError('');
+
+    const result = await dispatch(signup({
+      name: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+    }));
+
+    if (result.error) {
+      setError(result.payload || 'Registration failed. Please try again.');
+      return;
+    }
+
+    // Persist legacy keys that Layout / PrivateRoute still read
+    localStorage.setItem('isLogin', 'true');
     localStorage.setItem('role', 'User');
-    localStorage.setItem('accessToken', '1234567890');
     navigate('/');
   };
 
@@ -459,6 +478,12 @@ const Register = () => {
               </Typography>
             </Box>
 
+            {error && (
+              <Alert severity="error" sx={{ borderRadius: 2 }}>
+                {error}
+              </Alert>
+            )}
+
             <StyledTextField
               label="Full Name"
               variant="outlined"
@@ -578,6 +603,7 @@ const Register = () => {
               fullWidth
               size="large"
               disabled={
+                loading ||
                 !formData.fullName ||
                 !formData.email ||
                 !formData.password ||
@@ -585,7 +611,7 @@ const Register = () => {
                 passwordStrength < 50
               }
             >
-              Create Account ✨
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Account ✨'}
             </GradientButton>
 
             <Box sx={{ textAlign: 'center', mt: 2 }}>

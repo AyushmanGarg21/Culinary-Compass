@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Modal,
   Box,
@@ -24,10 +25,12 @@ import {
   Send as SendIcon,
   CheckCircle as CheckIcon
 } from '@mui/icons-material';
+import { submitCreatorRequest, clearLastSubmitted } from '../redux/features/Users/userRequestSlice';
 
 const CreatorFormModal = ({ open, handleClose }) => {
+  const dispatch = useDispatch();
+  const { submitting: isSubmitting, error } = useSelector((state) => state.userRequests);
   const [activeStep, setActiveStep] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     message: '',
@@ -54,23 +57,18 @@ const CreatorFormModal = ({ open, handleClose }) => {
     }
   };
 
-  const handleSubmit = () => {
-    setIsSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Submitting Creator Form...', formData);
-      setIsSubmitting(false);
+  const handleSubmit = async () => {
+    const result = await dispatch(submitCreatorRequest(formData));
+    if (!result.error) {
       setIsSubmitted(true);
-
-      // Reset after showing success
       setTimeout(() => {
         setFormData({ message: '', experience: '', links: '' });
         setActiveStep(0);
         setIsSubmitted(false);
+        dispatch(clearLastSubmitted());
         handleClose();
       }, 2000);
-    }, 1500);
+    }
   };
 
   const isStepValid = () => {

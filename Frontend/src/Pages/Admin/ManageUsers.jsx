@@ -1,7 +1,7 @@
 // ManageUsers.jsx
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsers } from '../../redux/features/Admin/manageSlice';
+import { fetchUsers, deleteUser, deactivateUser, activateUser } from '../../redux/features/Admin/manageSlice';
 import ManageCard from '../../components/Admin/ManageCard';
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -92,8 +92,9 @@ const ManageUsers = () => {
                 phone={user.phone}
                 email={user.email}
                 role="user"
-                onDelete={() => console.log(`Delete ${user.id}`)}
-                onDeactivate={() => console.log(`Deactivate ${user.id}`)}
+                onDelete={() => dispatch(deleteUser(user.id))}
+                onDeactivate={() => dispatch(deactivateUser(user.id))}
+                onActivate={() => dispatch(activateUser(user.id))}
               />
             ))
           )}
