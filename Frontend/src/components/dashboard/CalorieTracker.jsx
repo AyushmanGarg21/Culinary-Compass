@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
-  updateCalorieTarget, 
   navigateDate, 
   fetchCaloriesForDate,
-  calculateConsumedCalories 
+  calculateConsumedCalories,
+  setCalorieTarget
 } from '../../redux/features/Users/dashboardSlice';
+import { updateProfile } from '../../redux/features/Users/profileSlice';
 
 const CalorieTracker = () => {
   const dispatch = useDispatch();
   const { calorieTarget, consumedCalories, selectedDate, calorieHistory } = useSelector(state => state.dashboard);
+  const { saving: savingTarget } = useSelector(state => state.profile);
   const [isEditing, setIsEditing] = useState(false);
   const [tempTarget, setTempTarget] = useState(calorieTarget);
   const [animatedCalories, setAnimatedCalories] = useState(0);
@@ -103,10 +105,15 @@ const CalorieTracker = () => {
     requestAnimationFrame(animate);
   }, [displayCalories]);
 
-  const handleSaveTarget = () => {
+  const handleSaveTarget = async () => {
     if (tempTarget > 0) {
-      dispatch(updateCalorieTarget(tempTarget));
-      setIsEditing(false);
+      const result = await dispatch(updateProfile({ calories_target: tempTarget }));
+      if (!result.error) {
+        // Keep dashboardSlice in sync with the saved value from the API response
+        const savedTarget = result.payload?.calories_target ?? tempTarget;
+        dispatch(setCalorieTarget(savedTarget));
+        setIsEditing(false);
+      }
     }
   };
 
@@ -272,9 +279,10 @@ const CalorieTracker = () => {
               </button>
               <button
                 onClick={handleSaveTarget}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={savingTarget}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Save
+                {savingTarget ? 'Saving…' : 'Save'}
               </button>
             </div>
           </div>

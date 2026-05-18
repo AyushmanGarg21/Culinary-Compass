@@ -5,9 +5,9 @@ import {
   fetchMealTypes,
   fetchMealOptions,
   fetchWeeklyPlan,
-  copyPreviousWeek,
   setEditingMeal,
-  saveWeeklyPlan
+  saveWeeklyPlan,
+  copyPreviousWeekPlan,
 } from '../../../redux/features/Users/mealPlannerSlice';
 import WeeklyCalendar from '../../../components/MealPlanner/WeeklyCalendar';
 import MealEditModal from '../../../components/MealPlanner/MealEditModal';
@@ -40,9 +40,7 @@ const MealPlanner = () => {
   };
 
   const handleCopyPreviousWeek = () => {
-    dispatch(copyPreviousWeek());
-    // In a real implementation, this would copy actual data
-    alert('Previous week plan copied! (Feature simulated)');
+    dispatch(copyPreviousWeekPlan());
   };
 
   const handleSaveWeeklyPlan = () => {

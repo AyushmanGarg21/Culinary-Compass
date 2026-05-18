@@ -9,7 +9,7 @@ import {
 
 const MealEditModal = () => {
   const dispatch = useDispatch();
-  const { editingMeal, mealOptions, loadingMealOptions } = useSelector(
+  const { editingMeal, mealOptions, loadingMealOptions, currentWeekOffset } = useSelector(
     (state) => state.mealPlanner
   );
 
@@ -43,7 +43,7 @@ const MealEditModal = () => {
 
   const handleSave = () => {
     if (selectedMeal) {
-      dispatch(saveMealPlan({ date, mealType, meal: selectedMeal }));
+      dispatch(saveMealPlan({ date, mealType, meal: selectedMeal, weekOffset: currentWeekOffset }));
     }
     dispatch(clearEditingMeal());
   };
@@ -63,7 +63,7 @@ const MealEditModal = () => {
   };
 
   const handleRemove = () => {
-    dispatch(saveMealPlan({ date, mealType, meal: null }));
+    dispatch(saveMealPlan({ date, mealType, meal: null, weekOffset: currentWeekOffset }));
     dispatch(clearEditingMeal());
   };
 

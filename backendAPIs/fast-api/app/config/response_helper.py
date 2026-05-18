@@ -1,7 +1,28 @@
 """Response helper for standardized API responses."""
+import json
+from datetime import datetime, date
+from decimal import Decimal
 from typing import Any, Optional
+from uuid import UUID
 from fastapi import status
 from fastapi.responses import JSONResponse
+
+
+class _CustomEncoder(json.JSONEncoder):
+    """JSON encoder that handles types the stdlib encoder can't."""
+    def default(self, obj):
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        if isinstance(obj, Decimal):
+            return float(obj)
+        if isinstance(obj, UUID):
+            return str(obj)
+        return super().default(obj)
+
+
+def _jsonable(data: Any) -> Any:
+    """Round-trip through the custom encoder to produce a plain dict/list."""
+    return json.loads(json.dumps(data, cls=_CustomEncoder))
 
 
 class ResponseHelper:
@@ -31,7 +52,7 @@ class ResponseHelper:
         }
         return JSONResponse(
             status_code=status_code,
-            content=response_content
+            content=_jsonable(response_content)
         )
 
     @staticmethod

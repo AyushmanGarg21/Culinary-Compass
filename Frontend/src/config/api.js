@@ -67,6 +67,12 @@ export const API_ENDPOINTS = {
     MEAL_BY_ID: (id) => `/api/v1/master/meals/${id}`,
   },
 
+  // Meal Planner
+  MEAL_PLAN: {
+    GET: '/api/v1/users/meal-plan',
+    SAVE: '/api/v1/users/meal-plan/save',
+  },
+
   // Admin
   ADMIN: {
     CREATOR_REQUESTS: '/api/v1/admin/creator-requests',
