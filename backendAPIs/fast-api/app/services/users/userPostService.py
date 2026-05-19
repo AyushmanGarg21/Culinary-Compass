@@ -1,5 +1,6 @@
 """Service layer for user post and social operations."""
 from typing import List, Optional
+from datetime import date,datetime, timezone
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import OperationalError, DatabaseError, IntegrityError
 from sqlalchemy import and_, or_, func
@@ -55,6 +56,17 @@ class UserPostService:
 
             posts_data = []
             for post in posts:
+                created_at = datetime.fromisoformat(post.created_at.replace("Z", "+00:00")) if isinstance(post.created_at, str) else post.created_at
+
+                diff_days = (datetime.now(timezone.utc) - created_at).days
+
+                timeAgo = f"{diff_days} days ago"
+
+                if diff_days == 0:
+                    timeAgo = "Today"
+                elif diff_days == 1:
+                    timeAgo = "1 day ago"
+
                 post_info = {
                     "id": post.id,
                     "user_id": post.user_id,
@@ -68,7 +80,7 @@ class UserPostService:
                     "image": post.image,
                     "ingredients": post.ingredients,
                     "instructions": post.instructions,
-                    "created_at": post.created_at.isoformat() if post.created_at else None
+                    "timeAgo": timeAgo
                 }
                 posts_data.append(post_info)
 

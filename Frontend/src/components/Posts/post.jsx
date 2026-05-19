@@ -27,16 +27,6 @@ const Post = ({ post }) => {
     setIsDrawerOpen(open);
   };
 
-  const formatTimeAgo = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-    
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return '1 day ago';
-    return `${diffInDays} days ago`;
-  };
-
   const getCuisineColor = (cuisine) => {
     const colors = {
       'Italian': 'bg-red-100 text-red-800',
@@ -56,7 +46,7 @@ const Post = ({ post }) => {
         <Box className="flex items-center justify-between p-4 border-b border-gray-100">
           <Box className="flex items-center space-x-3">
             <Avatar 
-              src={post.profilePic} 
+              src={post.user_profile_pic} 
               alt={post.username} 
               className="w-12 h-12 border-2 border-white shadow-md"
             />
@@ -66,7 +56,7 @@ const Post = ({ post }) => {
               </Typography>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
                 <AccessTimeIcon fontSize="small" />
-                <span>{formatTimeAgo(post.createdAt)}</span>
+                <span>{post.timeAgo || ""}</span>
                 <span>•</span>
                 <Chip 
                   label={post.cuisine_type}
@@ -121,7 +111,7 @@ const Post = ({ post }) => {
             {post.ingredients.slice(0, 3).map((ingredient, index) => (
               <Chip 
                 key={index} 
-                label={ingredient.name} 
+                label={ingredient} 
                 size="small"
                 className="bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
               />
@@ -225,7 +215,7 @@ const Post = ({ post }) => {
                   {post.ingredients.map((ingredient, index) => (
                     <Fade key={index} in={true} timeout={300 + index * 50}>
                       <Chip 
-                        label={ingredient.name}
+                        label={ingredient}
                         size="small"
                         className="bg-orange-50 text-orange-800 hover:bg-orange-100 transition-colors text-xs"
                       />
