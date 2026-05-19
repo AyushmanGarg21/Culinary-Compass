@@ -46,7 +46,7 @@ export const saveMealCompletions = createAsyncThunk(
     try {
       const state = getState();
       const completedIds = state.dashboard.todaysMeals
-        .filter((m) => m.completed)
+        .filter((m) => m.is_marked_done)
         .map((m) => m.id);
 
       return await dashboardService.markMealsDone(completedIds);
@@ -134,13 +134,16 @@ const dashboardSlice = createSlice({
       const { mealId } = action.payload;
       const meal = state.todaysMeals.find((m) => m.id === mealId);
       if (meal) {
-        const wasCompleted = meal.completed;
-        meal.completed = !meal.completed;
-        if (meal.completed && !wasCompleted) {
-          state.consumedCalories += meal.meal?.calories ?? 0;
-        } else if (!meal.completed && wasCompleted) {
-          state.consumedCalories -= meal.meal?.calories ?? 0;
+        const wasCompleted = meal.is_marked_done;
+        meal.is_marked_done = !meal.is_marked_done;
+        const cal = meal.calories;
+        if (meal.is_marked_done && !wasCompleted) {
+          state.consumedCalories += cal;
+        } else if (!meal.is_marked_done && wasCompleted) {
+          state.consumedCalories -= cal;
         }
+        // clamp to 0 to avoid negative values
+        if (state.consumedCalories < 0) state.consumedCalories = 0;
       }
     },
     setCalorieTarget: (state, action) => {
@@ -150,8 +153,8 @@ const dashboardSlice = createSlice({
       const today = new Date().toISOString().split('T')[0];
       if (state.selectedDate === today) {
         state.consumedCalories = state.todaysMeals
-          .filter((m) => m.completed)
-          .reduce((total, m) => total + (m.meal?.calories ?? 0), 0);
+          .filter((m) => m.completed || m.is_marked_done)
+          .reduce((total, m) => total + (m.calories ?? m.meal?.calories ?? 0), 0);
       }
     },
     setSelectedDate: (state, action) => {
@@ -177,8 +180,8 @@ const dashboardSlice = createSlice({
 
       if (newDate === today) {
         state.consumedCalories = state.todaysMeals
-          .filter((m) => m.completed)
-          .reduce((total, m) => total + (m.meal?.calories ?? 0), 0);
+          .filter((m) => m.completed || m.is_marked_done)
+          .reduce((total, m) => total + (m.calories ?? m.meal?.calories ?? 0), 0);
       } else if (state.calorieHistory[newDate] !== undefined) {
         state.consumedCalories = state.calorieHistory[newDate];
       }
@@ -205,8 +208,8 @@ const dashboardSlice = createSlice({
       .addCase(fetchTodaysMeals.fulfilled, (state, action) => {
         state.todaysMeals = action.payload.meals ?? action.payload;
         state.consumedCalories = state.todaysMeals
-          .filter((m) => m.completed || m.is_done)
-          .reduce((total, m) => total + (m.meal?.calories ?? m.calories ?? 0), 0);
+          .filter((m) => m.completed || m.is_marked_done)
+          .reduce((total, m) => total + (m.calories ?? m.meal?.calories ?? 0), 0);
       })
       .addCase(fetchTodaysMeals.rejected, (state, action) => {
         state.error = action.payload;
@@ -254,8 +257,8 @@ const dashboardSlice = createSlice({
     builder.addCase(syncWithMealPlanner.fulfilled, (state, action) => {
       state.todaysMeals = action.payload.meals ?? action.payload;
       state.consumedCalories = state.todaysMeals
-        .filter((m) => m.completed || m.is_done)
-        .reduce((total, m) => total + (m.meal?.calories ?? m.calories ?? 0), 0);
+        .filter((m) => m.completed || m.is_marked_done)
+        .reduce((total, m) => total + (m.calories ?? m.meal?.calories ?? 0), 0);
     });
   },
 });

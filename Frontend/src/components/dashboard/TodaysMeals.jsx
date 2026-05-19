@@ -47,7 +47,7 @@ const TodaysMeals = ({ onEditMeals }) => {
     return icons[mealType] || '🍴';
   };
 
-  const completedCount = todaysMeals.filter(meal => meal.completed).length;
+  const completedCount = todaysMeals.filter(meal => meal.is_marked_done).length;
   const totalCount = todaysMeals.length;
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
@@ -99,7 +99,7 @@ const TodaysMeals = ({ onEditMeals }) => {
             {todaysMeals.map((mealItem, index) => (
               <div
                 key={mealItem.id}
-                className={`p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${mealItem.completed
+                className={`p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105 ${mealItem.is_marked_done
                   ? 'bg-green-50 border-green-200 shadow-md'
                   : 'bg-gray-50 border-gray-200 hover:border-blue-300'
                   }`}
@@ -109,24 +109,24 @@ const TodaysMeals = ({ onEditMeals }) => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="text-2xl">{getMealTypeIcon(mealItem.mealType)}</div>
+                    <div className="text-2xl">{getMealTypeIcon(mealItem.meal_type)}</div>
                     <div>
                       <h3 className="font-semibold text-gray-900">
-                        {getMealTypeLabel(mealItem.mealType)}
+                        {getMealTypeLabel(mealItem.meal_type)}
                       </h3>
-                      <p className="text-gray-700">{mealItem.meal.name}</p>
-                      <p className="text-sm text-gray-500">{mealItem.meal.calories} calories</p>
+                      <p className="text-gray-700">{mealItem.meal_name}</p>
+                      <p className="text-sm text-gray-500">{mealItem.calories} calories</p>
                     </div>
                   </div>
 
                   <button
                     onClick={() => handleToggleMeal(mealItem.id)}
-                    className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${mealItem.completed
+                    className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${mealItem.is_marked_done
                       ? 'bg-green-500 border-green-500 text-white'
                       : 'border-gray-300 hover:border-green-400'
                       }`}
                   >
-                    {mealItem.completed && (
+                    {mealItem.is_marked_done && (
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>

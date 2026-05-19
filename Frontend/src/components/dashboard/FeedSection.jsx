@@ -26,17 +26,10 @@ const FeedSection = ({ onViewPosts }) => {
       ) : (
         <div>
           {topPosts.slice(0, 1).map((post, index) => {
-            const authorName = post.username || post.author || 'Unknown';
-            const timeAgo = post.createdAt
-              ? (() => {
-                  const diffDays = Math.floor((Date.now() - new Date(post.createdAt)) / 86400000);
-                  if (diffDays === 0) return 'Today';
-                  if (diffDays === 1) return '1 day ago';
-                  return `${diffDays} days ago`;
-                })()
-              : post.timeAgo || '';
-            const content = post.overview || post.content || '';
-            const tags = post.tags || (post.cuisine_type ? [post.cuisine_type] : []);
+            const authorName = post.author || 'Unknown';
+            const timeAgo = post.timeAgo || '';
+            const content = post.overview || '';
+            const tags = (post.ingredients ? post.ingredients : []);
 
             return (
             <div
@@ -49,8 +42,8 @@ const FeedSection = ({ onViewPosts }) => {
               {/* Post Header */}
               <div className="flex items-center space-x-3 mb-3">
                 <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
-                  {post.profilePic
-                    ? <img src={post.profilePic} alt={authorName} className="w-full h-full object-cover" />
+                  {post.profile_pic
+                    ? <img src={post.profile_pic} alt={authorName} className="w-full h-full object-cover" />
                     : authorName.charAt(0).toUpperCase()
                   }
                 </div>

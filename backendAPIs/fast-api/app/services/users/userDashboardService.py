@@ -1,5 +1,5 @@
 """Service layer for user dashboard operations."""
-from datetime import date
+from datetime import date,datetime, timezone
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError, DatabaseError
@@ -224,9 +224,22 @@ class UserDashboardService:
             if not latest_post:
                 return None
 
+            
+            created_at = datetime.fromisoformat(latest_post.created_at.replace("Z", "+00:00")) if isinstance(latest_post.created_at, str) else latest_post.created_at
+
+            diff_days = (datetime.now(timezone.utc) - created_at).days
+
+            timeAgo = f"{diff_days} days ago"
+
+            if diff_days == 0:
+                timeAgo = "Today"
+            elif diff_days == 1:
+                timeAgo = "1 day ago"
+
             return {
                 "id": latest_post.id,
-                "user_id": latest_post.user_id,
+                "author": latest_post.user.name,
+                "profile_pic":latest_post.user.profile_pic,
                 "title": latest_post.title,
                 "overview": latest_post.overview,
                 "cooking_time": latest_post.cooking_time,
@@ -235,7 +248,7 @@ class UserDashboardService:
                 "image": latest_post.image,
                 "ingredients": latest_post.ingredients,
                 "instructions": latest_post.instructions,
-                "created_at": latest_post.created_at.isoformat() if latest_post.created_at else None
+                "timeAgo": timeAgo
             }
 
         except OperationalError:

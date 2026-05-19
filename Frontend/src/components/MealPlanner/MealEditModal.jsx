@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   clearEditingMeal,
-  saveMealPlan,
   addCustomMeal,
   fetchMealOptions,
+  setMealInPlan,
 } from '../../redux/features/Users/mealPlannerSlice';
 
 const MealEditModal = () => {
   const dispatch = useDispatch();
-  const { editingMeal, mealOptions, loadingMealOptions, currentWeekOffset } = useSelector(
+  const { editingMeal, mealOptions, loadingMealOptions } = useSelector(
     (state) => state.mealPlanner
   );
 
@@ -43,7 +43,9 @@ const MealEditModal = () => {
 
   const handleSave = () => {
     if (selectedMeal) {
-      dispatch(saveMealPlan({ date, mealType, meal: selectedMeal, weekOffset: currentWeekOffset }));
+      // Only update local Redux state — no API call here.
+      // The backend save happens when the user clicks the Save button on the planner page.
+      dispatch(setMealInPlan({ date, mealType, meal: selectedMeal }));
     }
     dispatch(clearEditingMeal());
   };
@@ -63,7 +65,8 @@ const MealEditModal = () => {
   };
 
   const handleRemove = () => {
-    dispatch(saveMealPlan({ date, mealType, meal: null, weekOffset: currentWeekOffset }));
+    // Clear the slot locally — no API call until Save is clicked on the planner page.
+    dispatch(setMealInPlan({ date, mealType, meal: null }));
     dispatch(clearEditingMeal());
   };
 

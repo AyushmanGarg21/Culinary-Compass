@@ -270,6 +270,14 @@ const mealPlannerSlice = createSlice({
     clearEditingMeal: (state) => {
       state.editingMeal = null;
     },
+    // Update a single meal slot in local state only — no API call.
+    // The backend is only updated when the user clicks the Save button.
+    setMealInPlan: (state, action) => {
+      const { date, mealType, meal } = action.payload;
+      if (state.currentWeekPlan[date] !== undefined) {
+        state.currentWeekPlan[date][mealType] = meal;
+      }
+    },
     toggleMealTypeSettings: (state) => {
       state.showMealTypeSettings = !state.showMealTypeSettings;
     },
@@ -309,14 +317,8 @@ const mealPlannerSlice = createSlice({
       .addCase(saveWeeklyPlan.fulfilled, (state, action) => { state.saving = false; state.lastSaved = action.payload.savedAt; })
       .addCase(saveWeeklyPlan.rejected,  (state, action) => { state.saving = false; state.error = action.payload; })
 
-      // saveMealPlan (individual slot)
-      .addCase(saveMealPlan.fulfilled, (state, action) => {
-        const { date, mealType, meal } = action.payload;
-        if (state.currentWeekPlan[date]) {
-          state.currentWeekPlan[date][mealType] = meal;
-        }
-      })
-      .addCase(saveMealPlan.rejected, (state, action) => { state.error = action.payload; })
+      // saveMealPlan cases removed — individual slot saves no longer call the API.
+      // All persistence goes through saveWeeklyPlan (the Save button).
 
       // copyPreviousWeekPlan
       .addCase(copyPreviousWeekPlan.fulfilled, (state, action) => { state.currentWeekPlan = action.payload; })
@@ -338,6 +340,7 @@ const mealPlannerSlice = createSlice({
 export const {
   setEditingMeal,
   clearEditingMeal,
+  setMealInPlan,
   toggleMealTypeSettings,
   updateMealTypeEnabled,
 } = mealPlannerSlice.actions;
