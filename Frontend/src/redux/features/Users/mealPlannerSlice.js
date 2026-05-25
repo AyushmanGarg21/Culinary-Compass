@@ -186,6 +186,8 @@ export const copyPreviousWeekPlan = createAsyncThunk(
     try {
       const state = getState();
       const { currentWeekOffset, currentWeekPlan } = state.mealPlanner;
+
+      // Previous week starts from Monday
       const prevWeekStart = getWeekStart(currentWeekOffset - 1);
 
       const response = await apiClient.get('/api/v1/users/meal-plan', {
@@ -193,34 +195,60 @@ export const copyPreviousWeekPlan = createAsyncThunk(
       });
 
       const savedPlan = response.data.data?.plan ?? {};
-      const currentDates = Object.keys(currentWeekPlan).sort();
-      const prevEntries = Object.entries(savedPlan).sort(([a], [b]) => a.localeCompare(b));
 
-      // Map previous week meals by day-of-week index so they land on the right day
-      const mealsByDayIndex = {};
-      prevEntries.forEach(([, dayPlan], idx) => {
-        mealsByDayIndex[idx] = dayPlan;
+      // Helper: get weekday index (Monday = 0, Sunday = 6)
+      const getWeekdayIndex = (dateString) => {
+        const day = new Date(dateString).getDay();
+
+        // JS: Sunday = 0
+        // Convert => Monday = 0
+        return day === 0 ? 6 : day - 1;
+      };
+
+      // Store previous week meals by weekday
+      const mealsByWeekday = {};
+
+      Object.entries(savedPlan).forEach(([date, dayPlan]) => {
+        const weekdayIndex = getWeekdayIndex(date);
+
+        mealsByWeekday[weekdayIndex] = dayPlan;
       });
 
       const copiedPlan = {};
-      currentDates.forEach((dateKey, idx) => {
-        copiedPlan[dateKey] = { ...(currentWeekPlan[dateKey] ?? {}) };
-        const prevDay = mealsByDayIndex[idx];
-        if (prevDay) {
-          Object.entries(prevDay).forEach(([mealType, mealInfo]) => {
-            copiedPlan[dateKey][mealType] = {
-              id: mealInfo.meal_id,
-              name: mealInfo.meal_name,
-              calories: mealInfo.calories,
-              isCustom: mealInfo.is_custom_meal,
-            };
-          });
-        }
-      });
+
+      Object.keys(currentWeekPlan)
+        .sort()
+        .forEach((dateKey) => {
+          const weekdayIndex = getWeekdayIndex(dateKey);
+
+          copiedPlan[dateKey] = {
+            ...(currentWeekPlan[dateKey] ?? {}),
+          };
+
+          const prevDayMeals = mealsByWeekday[weekdayIndex];
+
+          if (prevDayMeals) {
+            Object.entries(prevDayMeals).forEach(
+              ([mealType, mealInfo]) => {
+                copiedPlan[dateKey][mealType] = {
+                  id: mealInfo.meal_id,
+                  name: mealInfo.meal_name,
+                  calories: mealInfo.calories,
+                  isCustom: mealInfo.is_custom_meal,
+                };
+              }
+            );
+          }
+        });
+
+      console.log('copiedPlan ==> ', copiedPlan);
 
       return copiedPlan;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.detail || 'Failed to copy previous week');
+      return rejectWithValue(
+        error.response?.data?.detail ||
+          'Failed to copy previous week'
+      );
     }
   }
 );

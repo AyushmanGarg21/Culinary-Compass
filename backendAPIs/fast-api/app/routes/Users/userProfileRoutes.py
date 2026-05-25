@@ -119,7 +119,6 @@ async def upload_profile_picture(
             db, user_id, type('obj', (object,), {'profile_pic': data_url, '__dict__': {'profile_pic': data_url}})()
         )
         return ResponseHelper.ok_response(
-            data={"profile_pic": data_url},
             message="Profile picture updated successfully"
         )
     except HTTPException:

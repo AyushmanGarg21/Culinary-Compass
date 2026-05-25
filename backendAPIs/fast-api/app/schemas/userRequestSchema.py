@@ -52,7 +52,7 @@ class CreateCreatorPost(BaseModel):
     cuisine_type: str = Field(..., min_length=2, max_length=200)
     servings: int = Field(..., gt=0, description="Number of servings")
     image: Optional[str] = Field(None, max_length=1024)
-    ingredients: List[dict] = Field(..., min_items=1, description="List of ingredients")
+    ingredients: List[str] = Field(..., min_items=1, description="List of ingredients")
     instructions: Optional[str] = Field(None, description="Cooking instructions")
 
 
@@ -78,7 +78,7 @@ class CreatorPostResponse(BaseModel):
     cuisine_type: str
     servings: int
     image: Optional[str] = None
-    ingredients: List[dict]
+    ingredients: List[str]
     instructions: Optional[str] = None
     action_date: Optional[datetime] = None
     action_by: Optional[str] = None

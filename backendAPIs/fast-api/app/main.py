@@ -10,6 +10,7 @@ from typing import Annotated
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.exc import SQLAlchemyError
@@ -57,12 +58,21 @@ app.middleware("http")(AuthMiddleware(app))
 
 # Exception Handlers
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError
+):
     """Handle validation errors in request data."""
+
     log_warning(f"Validation error: {exc.errors()}")
+
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content={"detail": exc.errors(), "body": exc.body},
+        content=jsonable_encoder({
+            "success": False,
+            "message": "Validation error",
+            "errors": exc.errors(),
+        }),
     )
 
 @app.exception_handler(SQLAlchemyError)

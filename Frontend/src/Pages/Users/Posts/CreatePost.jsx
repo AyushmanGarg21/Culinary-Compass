@@ -44,6 +44,7 @@ const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [cookingTime, setCookingTime] = useState('');
   const [servings, setServings] = useState('');
+  const [cuisineType, setCuisineType] = useState('');
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [keywords, setKeywords] = useState([]);
@@ -112,7 +113,7 @@ const CreatePost = () => {
   const isStepValid = () => {
     switch (activeStep) {
       case 0:
-        return title.trim().length > 0 && overview.trim().length > 10;
+        return title.trim().length > 0 && overview.trim().length > 10 && cuisineType.trim().length > 0;
       case 1:
         return true; // Image is optional
       case 2:
@@ -128,6 +129,7 @@ const CreatePost = () => {
     const payload = {
       title,
       overview,
+      cuisine_type: cuisineType,
       cooking_time: cookingTime,
       servings,
       ingredients: keywords,
@@ -206,7 +208,7 @@ const CreatePost = () => {
                 }}
               />
 
-              <Box className="flex gap-4">
+              <Box className="grid gap-4 md:grid-cols-3">
                 <TextField
                   label="Cooking Time"
                   variant="outlined"
@@ -221,7 +223,6 @@ const CreatePost = () => {
                     ),
                     sx: { backgroundColor: 'white', borderRadius: 2 }
                   }}
-                  sx={{ flex: 1 }}
                 />
 
                 <TextField
@@ -238,7 +239,22 @@ const CreatePost = () => {
                     ),
                     sx: { backgroundColor: 'white', borderRadius: 2 }
                   }}
-                  sx={{ flex: 1 }}
+                />
+
+                <TextField
+                  label="Cuisine Type"
+                  variant="outlined"
+                  value={cuisineType}
+                  onChange={(e) => setCuisineType(e.target.value)}
+                  placeholder="Italian, Mexican, Indian..."
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <RestaurantIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                    sx: { backgroundColor: 'white', borderRadius: 2 }
+                  }}
                 />
               </Box>
             </Box>
