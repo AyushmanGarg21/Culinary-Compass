@@ -35,6 +35,7 @@ class UserInfo(BaseModel):
     name: Optional[str] = None
     phone_no: Optional[str] = None
     profile_pic: Optional[str] = None
+    food_preference: Optional[str] = None
     is_creator: bool = False
     is_active: bool = True
 
@@ -83,5 +84,6 @@ class CurrentUserResponse(BaseModel):
     weight: Optional[int] = None
     calories_target: Optional[int] = None
     about_me: Optional[str] = None
+    food_preference: Optional[str] = None
     is_creator: bool = False
     is_active: bool = True

@@ -274,7 +274,7 @@ const Register = () => {
     // Persist legacy keys that Layout / PrivateRoute still read
     localStorage.setItem('isLogin', 'true');
     localStorage.setItem('role', 'User');
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const getPasswordStrengthColor = () => {

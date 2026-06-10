@@ -166,6 +166,7 @@ class AuthService:
                     "email": user.email,
                     "name": user.name,
                     "phone_no": user.phone_no,
+                    "food_preference": user.food_preference,
                     "is_creator": user.is_creator,
                     "is_active": user.is_active
                 },
@@ -274,6 +275,7 @@ class AuthService:
                     "name": user.name,
                     "phone_no": user.phone_no,
                     "profile_pic": user.profile_pic,
+                    "food_preference": user.food_preference,
                     "is_creator": user.is_creator,
                     "is_active": user.is_active
                 },
@@ -561,6 +563,7 @@ class AuthService:
                 "weight": user.weight,
                 "calories_target": user.calories_target,
                 "about_me": user.about_me,
+                "food_preference": user.food_preference,
                 "is_creator": user.is_creator,
                 "is_active": user.is_active
             }
