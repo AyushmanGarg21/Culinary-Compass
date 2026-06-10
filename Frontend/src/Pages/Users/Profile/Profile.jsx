@@ -50,6 +50,7 @@ const apiToForm = (user) => ({
   cityId: user.city_id || '',
   city: user.city || '',
   aboutMe: user.about_me || '',
+  foodPreference: user.food_preference || '',
 });
 
 // Map local profileData keys → API payload (exact schema)
@@ -65,6 +66,7 @@ const formToApi = (form) => {
     height: form.height ? Number(form.height) : undefined,
     weight: form.weight ? Number(form.weight) : undefined,
     about_me: form.aboutMe || undefined,
+    food_preference: form.foodPreference || undefined,
   };
   // Remove undefined keys
   return Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined));
@@ -94,6 +96,7 @@ const Profile = () => {
     cityId: '',
     city: '',
     aboutMe: '',
+    foodPreference: '',
   });
 
   // Load profile on mount

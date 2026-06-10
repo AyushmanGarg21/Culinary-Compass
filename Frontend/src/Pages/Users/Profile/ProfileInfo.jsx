@@ -21,6 +21,7 @@ import {
   Height,
   Wc,
   LocationCity,
+  Restaurant,
 } from '@mui/icons-material';
 import {
   fetchCountries,
@@ -28,11 +29,12 @@ import {
 } from '../../../redux/features/utils/masterSlice';
 
 const genders = ['Male', 'Female', 'Other'];
+const foodPreferences = ['Vegan', 'Vegetarian', 'Non-Vegetarian'];
 
-// Fields to render in the grid (dateOfBirth, password, foodPreference excluded)
+// Fields to render in the grid (dateOfBirth, password excluded)
 const FIELD_ORDER = [
   'email', 'phone', 'country', 'city',
-  'language', 'gender',
+  'language', 'gender', 'foodPreference',
   'age', 'weight', 'height',
 ];
 
@@ -47,6 +49,7 @@ const getFieldIcon = (key) => {
     weight: <FitnessCenter />,
     height: <Height />,
     gender: <Wc />,
+    foodPreference: <Restaurant />,
   };
   return iconMap[key] || <Person />;
 };
@@ -62,6 +65,7 @@ const getFieldLabel = (key) => {
     weight: 'Weight (kg)',
     height: 'Height (cm)',
     gender: 'Gender',
+    foodPreference: 'Food Preference',
   };
   return labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
 };
@@ -220,19 +224,20 @@ const ProfileInfo = ({ profileData, isEditing, setProfileData }) => {
       );
     }
 
-    // ── Gender ────────────────────────────────────────────────────────────────
-    if (key === 'gender') {
+    // ── Gender & Food Preference ────────────────────────────────────────────────
+    if (key === 'gender' || key === 'foodPreference') {
+      const options = key === 'gender' ? genders : foodPreferences;
       return (
         <Grid item xs={12} sm={4} key={key}>
           <Grow in={true} timeout={300 + index * 100}>
             <TextField
               {...baseProps}
               select
-              value={profileData[key]}
+              value={profileData[key] || ''}
               onChange={(e) => setProfileData({ ...profileData, [key]: e.target.value })}
             >
-              {genders.map((g) => (
-                <MenuItem key={g} value={g}>{g}</MenuItem>
+              {options.map((opt) => (
+                <MenuItem key={opt} value={opt}>{opt}</MenuItem>
               ))}
             </TextField>
           </Grow>

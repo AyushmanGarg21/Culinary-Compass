@@ -3,8 +3,11 @@ import { Typography, IconButton, Chip, Tooltip, Fade, Avatar } from '@mui/materi
 import { 
   PersonRemoveRounded as PersonRemoveRoundedIcon, 
   FiberManualRecord as FiberManualRecordIcon,
-  Group as GroupIcon,
-  Message as MessageIcon
+  Message as MessageIcon,
+  LocalFlorist as LocalFloristIcon,
+  Restaurant as RestaurantIcon,
+  AccessTime as AccessTimeIcon,
+  LocationOn as LocationOnIcon
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFollow } from '../../redux/features/FollowedUsers/followedUsersSlice';
@@ -20,30 +23,17 @@ const UserFollowedCard = ({ user }) => {
     dispatch(toggleFollow(user.user_id));
   };
 
-  const getFoodPreferenceColor = (preference) => {
-    switch (preference?.toLowerCase()) {
-      case 'veg':
-      case 'vegetarian':
-        return 'bg-green-100 text-green-800';
-      case 'vegan':
-        return 'bg-emerald-100 text-emerald-800';
-      case 'non-veg':
-      case 'non-vegetarian':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
-  const formatLastActive = (dateString) => {
-    if (!dateString) return 'Active recently';
+
+  const getActiveStatus = (dateString) => {
+    if (!dateString) return { text: 'Active', isOnline: false };
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
 
-    if (diffInHours < 1) return 'Active now';
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    return `${Math.floor(diffInHours / 24)}d ago`;
+    if (diffInHours < 1) return { text: 'Online', isOnline: true };
+    if (diffInHours < 24) return { text: `${diffInHours}h ago`, isOnline: false };
+    return { text: `${Math.floor(diffInHours / 24)}d ago`, isOnline: false };
   };
 
   const getInitials = (name) => {
@@ -58,24 +48,24 @@ const UserFollowedCard = ({ user }) => {
   return (
     <Fade in={true} timeout={300}>
       <div 
-        className={`flex items-center p-3 bg-white/90 backdrop-blur-sm rounded-xl border border-white/20 transition-all duration-300 cursor-pointer ${
+        className={`flex items-center p-2 bg-white/90 backdrop-blur-sm rounded-xl border border-white/20 transition-all duration-300 cursor-pointer ${
           isHovered ? 'shadow-lg transform -translate-y-1' : 'shadow-md'
         }`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Profile Image */}
-        <div className="relative">
+        <div className="relative shrink-0">
           {user.profile_pic ? (
             <img
               src={user.profile_pic}
               alt={user.name}
-              className="w-12 h-12 rounded-full border-2 border-white shadow-md object-cover"
+              className="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover"
             />
           ) : (
             <Avatar 
-              className="w-12 h-12 border-2 border-white shadow-md"
-              sx={{ bgcolor: '#8B5CF6', fontSize: '1.25rem' }}
+              className="w-10 h-10 border-2 border-white shadow-sm"
+              sx={{ bgcolor: '#8B5CF6', fontSize: '1rem' }}
             >
               {getInitials(user.name)}
             </Avatar>
@@ -83,30 +73,72 @@ const UserFollowedCard = ({ user }) => {
         </div>
 
         {/* User Info */}
-        <div className="flex-1 ml-3 min-w-0">
-          <Typography 
-            variant="subtitle2" 
-            className="font-semibold text-gray-800 truncate"
-          >
-            {user.name}
-          </Typography>
-          
-          {user.food_preference && (
-            <div className="flex items-center space-x-2 mt-1">
-              <Chip
-                label={user.food_preference}
-                size="small"
-                className={`text-xs ${getFoodPreferenceColor(user.food_preference)}`}
-              />
+        <div className="flex-1 ml-3 min-w-0 flex flex-col justify-center">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Typography 
+                variant="subtitle2" 
+                className="font-semibold text-gray-800 truncate"
+                sx={{ fontSize: '0.875rem' }}
+              >
+                {user.name}
+              </Typography>
+              
+              {/* Food Preference Icon */}
+              {user.food_preference && (() => {
+                const pref = user.food_preference.toLowerCase();
+                const isNonVeg = pref.includes('non');
+                const isVegan = pref === 'vegan';
+                
+                let iconColor = isNonVeg ? 'border-red-600' : 'border-green-600';
+                let dotColor = isNonVeg ? 'bg-red-600' : 'bg-green-600';
+                
+                if (isVegan) {
+                  return (
+                    <Tooltip title="Vegan" placement="top">
+                      <LocalFloristIcon sx={{ fontSize: 14, color: '#10b981' }} className="shrink-0" />
+                    </Tooltip>
+                  );
+                }
+
+                return (
+                  <Tooltip title={user.food_preference} placement="top">
+                    <div className={`w-3.5 h-3.5 border flex items-center justify-center rounded-[2px] shrink-0 ${iconColor}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+                    </div>
+                  </Tooltip>
+                );
+              })()}
             </div>
-          )}
-
-          <div className="text-xs text-gray-500 truncate mt-1">
-            {user.about_me || `${user.city || ''} ${user.country || ''}`.trim()}
+            
+            {/* Activeness status */}
+            <div className="flex items-center text-[10px] shrink-0 ml-2">
+              {(() => {
+                const status = getActiveStatus(user.last_active);
+                return status.isOnline ? (
+                  <span className="flex items-center text-green-500 font-medium">
+                    <FiberManualRecordIcon sx={{ fontSize: 8 }} className="mr-1 animate-pulse" />
+                    Online
+                  </span>
+                ) : (
+                  <span className="flex items-center text-gray-400">
+                    <AccessTimeIcon sx={{ fontSize: 10 }} className="mr-0.5" />
+                    {status.text}
+                  </span>
+                );
+              })()}
+            </div>
           </div>
-
-          <div className="text-xs text-gray-500 mt-1">
-            <span>{formatLastActive(user.last_active)}</span>
+          
+          <div className="flex items-center text-[11px] text-gray-500 truncate mt-0.5">
+             {(user.city || user.country) && (
+               <span className="shrink-0 flex items-center text-gray-400 mr-1.5">
+                  <LocationOnIcon sx={{ fontSize: 12 }} className="mr-0.5"/>
+                  {user.city || user.country}
+                  <span className="mx-1.5">•</span>
+               </span>
+             )}
+            <span className="truncate">{user.about_me || 'Food enthusiast'}</span>
           </div>
         </div>
 

@@ -20,6 +20,7 @@ class UserProfileResponse(BaseModel):
     weight: Optional[int] = None
     calories_target: Optional[int] = None
     about_me: Optional[str] = None
+    food_preference: Optional[str] = None
     is_active: bool
     is_creator: bool
     created_at: datetime
@@ -43,6 +44,7 @@ class UpdateUserProfileRequest(BaseModel):
     weight: Optional[int] = Field(None, ge=1, le=500, description="Weight in kg")
     calories_target: Optional[int] = Field(None, ge=0)
     about_me: Optional[str] = None
+    food_preference: Optional[str] = Field(None, max_length=32)
 
 
 class UpdatePasswordRequest(BaseModel):
