@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Tooltip, Grow } from '@mui/material';
+import { Tooltip, Grow, Avatar } from '@mui/material';
 
-const MessageBubble = ({ message, isOwn, showAvatar, userImage }) => {
+const MessageBubble = ({ message, isOwn, showAvatar, userImage, userName }) => {
   const [showTime, setShowTime] = useState(false);
 
   const formatTime = (dateString) => {
@@ -19,17 +19,35 @@ const MessageBubble = ({ message, isOwn, showAvatar, userImage }) => {
     return date.toLocaleDateString();
   };
 
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   return (
     <Grow in={true} timeout={300}>
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-2`}>
         <div className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${isOwn ? 'flex-row-reverse space-x-reverse' : ''}`}>
           {/* Avatar */}
           {!isOwn && showAvatar && (
-            <img
-              src={userImage}
-              alt="User"
-              className="w-6 h-6 rounded-full border border-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-md"
-            />
+            userImage ? (
+              <img
+                src={userImage}
+                alt={userName || "User"}
+                className="w-6 h-6 rounded-full border border-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-md"
+              />
+            ) : (
+              <Avatar
+                className="w-6 h-6 border border-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-md"
+                sx={{ bgcolor: '#8B5CF6', fontSize: '0.6rem' }}
+              >
+                {getInitials(userName)}
+              </Avatar>
+            )
           )}
           {!isOwn && !showAvatar && <div className="w-6" />}
 

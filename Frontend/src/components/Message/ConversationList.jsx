@@ -1,6 +1,6 @@
 
 import { useDispatch, useSelector } from 'react-redux';
-import { Badge, Fade, Slide } from '@mui/material';
+import { Badge, Fade, Slide, Avatar } from '@mui/material';
 import { setCurrentConversation, markAsRead } from '../../redux/features/Messages/messagesSlice';
 
 const ConversationList = ({ conversations, onConversationSelect }) => {
@@ -29,6 +29,15 @@ const ConversationList = ({ conversations, onConversationSelect }) => {
 
   const truncateMessage = (message, maxLength = 50) => {
     return message.length > maxLength ? `${message.substring(0, maxLength)}...` : message;
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
 
   if (conversations.length === 0) {
@@ -66,17 +75,32 @@ const ConversationList = ({ conversations, onConversationSelect }) => {
             <div className="flex items-center space-x-3">
               {/* Profile Image */}
               <div className="relative">
-                <img
-                  src={conversation.image}
-                  alt={conversation.username}
-                  className={`
-                    w-12 h-12 rounded-full object-cover border-2 shadow-sm transition-all duration-300
-                    ${currentConversation?.id === conversation.id 
-                      ? 'border-blue-300 shadow-blue-100' 
-                      : 'border-gray-200 hover:border-gray-300'
-                    }
-                  `}
-                />
+                {conversation.image ? (
+                  <img
+                    src={conversation.image}
+                    alt={conversation.username}
+                    className={`
+                      w-12 h-12 rounded-full object-cover border-2 shadow-sm transition-all duration-300
+                      ${currentConversation?.id === conversation.id 
+                        ? 'border-blue-300 shadow-blue-100' 
+                        : 'border-gray-200 hover:border-gray-300'
+                      }
+                    `}
+                  />
+                ) : (
+                  <Avatar
+                    className={`
+                      w-12 h-12 border-2 shadow-sm transition-all duration-300
+                      ${currentConversation?.id === conversation.id 
+                        ? 'border-blue-300 shadow-blue-100' 
+                        : 'border-gray-200 hover:border-gray-300'
+                      }
+                    `}
+                    sx={{ bgcolor: '#8B5CF6', fontSize: '1.25rem' }}
+                  >
+                    {getInitials(conversation.username)}
+                  </Avatar>
+                )}
                 {/* Unread indicator dot */}
                 {conversation.unreadCount > 0 && (
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white animate-pulse">

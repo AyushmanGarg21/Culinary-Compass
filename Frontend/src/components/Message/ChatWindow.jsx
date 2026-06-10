@@ -8,7 +8,8 @@ import {
   TextField, 
   CircularProgress,
   Fade,
-  Tooltip
+  Tooltip,
+  Avatar
 } from '@mui/material';
 import MessageBubble from './MessageBubble';
 import { 
@@ -31,9 +32,18 @@ const ChatWindow = () => {
 
   const currentMessages = currentConversation ? messages[currentConversation.id] || [] : [];
 
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   useEffect(() => {
     if (currentConversation && !messages[currentConversation.id]) {
-      dispatch(fetchMessages(currentConversation.id));
+      dispatch(fetchMessages({ creatorId: currentConversation.id }));
     }
   }, [currentConversation, dispatch, messages]);
 
@@ -54,7 +64,7 @@ const ChatWindow = () => {
     
     try {
       await dispatch(sendMessage({
-        conversationId: currentConversation.id,
+        receiverId: currentConversation.id,
         content: messageContent
       })).unwrap();
       
@@ -78,11 +88,20 @@ const ChatWindow = () => {
       {/* Chat Header - Desktop Only - Fixed */}
       <Fade in={true} timeout={400}>
         <div className="hidden md:flex flex-shrink-0 items-center p-4 border-b border-gray-200 bg-white/95 backdrop-blur-sm">
-          <img
-            src={currentConversation.image}
-            alt={currentConversation.username}
-            className="w-10 h-10 rounded-full mr-3 border-2 border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-105"
-          />
+          {currentConversation.image ? (
+            <img
+              src={currentConversation.image}
+              alt={currentConversation.username}
+              className="w-10 h-10 rounded-full mr-3 border-2 border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-105"
+            />
+          ) : (
+            <Avatar
+              className="w-10 h-10 mr-3 border-2 border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-105"
+              sx={{ bgcolor: '#8B5CF6', fontSize: '1rem' }}
+            >
+              {getInitials(currentConversation.username)}
+            </Avatar>
+          )}
           <div className="flex-1">
             <h3 className="font-semibold text-gray-800 transition-colors duration-200">
               {currentConversation.username}
@@ -119,12 +138,13 @@ const ChatWindow = () => {
                 <div>
                   <MessageBubble 
                     message={message} 
-                    isOwn={message.senderId === 'current_user'}
+                    isOwn={message.senderId !== currentConversation.id}
                     showAvatar={
                       index === 0 || 
                       currentMessages[index - 1].senderId !== message.senderId
                     }
                     userImage={currentConversation.image}
+                    userName={currentConversation.username}
                   />
                 </div>
               </Fade>

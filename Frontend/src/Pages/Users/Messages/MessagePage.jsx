@@ -12,7 +12,8 @@ import {
     Fade,
     Drawer,
     useMediaQuery,
-    useTheme
+    useTheme,
+    Avatar
 } from '@mui/material';
 import ConversationList from '../../../components/Message/ConversationList';
 import ChatWindow from '../../../components/Message/ChatWindow';
@@ -57,6 +58,15 @@ const MessagePage = () => {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+    const getInitials = (name) => {
+        if (!name) return 'U';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) {
+            return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    };
 
     useEffect(() => {
         dispatch(fetchConversations());
@@ -181,11 +191,20 @@ const MessagePage = () => {
                                     >
                                         <ArrowBackIcon />
                                     </IconButton>
-                                    <img
-                                        src={currentConversation.image}
-                                        alt={currentConversation.username}
-                                        className="w-8 h-8 rounded-full mr-3"
-                                    />
+                                    {currentConversation.image ? (
+                                        <img
+                                            src={currentConversation.image}
+                                            alt={currentConversation.username}
+                                            className="w-8 h-8 rounded-full mr-3"
+                                        />
+                                    ) : (
+                                        <Avatar
+                                            className="w-8 h-8 mr-3"
+                                            sx={{ bgcolor: '#8B5CF6', fontSize: '0.875rem' }}
+                                        >
+                                            {getInitials(currentConversation.username)}
+                                        </Avatar>
+                                    )}
                                     <div className="flex-1">
                                         <h3 className="font-semibold text-gray-800">
                                             {currentConversation.username}
