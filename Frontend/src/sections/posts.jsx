@@ -27,7 +27,7 @@ const Posts = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4">
-        <Typography className="text-red-500">Error loading posts: {error}</Typography>
+        <Typography className="text-red-500">Error loading posts: {typeof error === 'string' ? error : 'Failed to load posts'}</Typography>
       </div>
     );
   }

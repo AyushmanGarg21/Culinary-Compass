@@ -40,6 +40,8 @@ class User(Base):
     weight = Column(Integer, nullable=True)
     calories_target = Column(Integer, nullable=True)
     about_me = Column(Text, nullable=True)
+    food_preference = Column(String(32), nullable=True)
+    last_active = Column(DateTime(timezone=True), nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
     is_creator = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

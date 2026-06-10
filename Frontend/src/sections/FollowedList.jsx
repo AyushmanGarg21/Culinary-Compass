@@ -22,8 +22,9 @@ const FollowedList = () => {
       setFilteredUsers(followedUsers);
     } else {
       const filtered = followedUsers.filter(user =>
-        user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.foodPreference.toLowerCase().includes(searchQuery.toLowerCase())
+        (user.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.about_me || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.food_preference || '').toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredUsers(filtered);
     }
@@ -49,7 +50,7 @@ const FollowedList = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4 p-6">
-        <Typography className="text-red-500">Error loading followed users: {error}</Typography>
+        <Typography className="text-red-500">Error loading followed users: {typeof error === 'string' ? error : 'Failed to load following list'}</Typography>
       </div>
     );
   }
@@ -129,7 +130,7 @@ const FollowedList = () => {
         <div className="space-y-2 md:space-y-3">
           {filteredUsers.map((user, index) => (
             <Slide
-              key={user.id}
+              key={user.user_id}
               direction="left"
               in={true}
               timeout={300 + index * 100}

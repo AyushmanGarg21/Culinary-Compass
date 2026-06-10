@@ -21,12 +21,10 @@ const PostPage = () => {
   const { loading: postsLoading } = useSelector((state) => state.posts);
   const { loading: followedLoading } = useSelector((state) => state.followedUsers);
 
-  const isLoading = usersLoading || postsLoading || followedLoading;
+  const isLoading = usersLoading;
 
   useEffect(() => {
     dispatch(fetchUsers());
-    dispatch(fetchPosts());
-    dispatch(fetchFollowedUsers());
   }, [dispatch]);
 
   return (

@@ -99,9 +99,11 @@ export const fetchWeeklyPlan = createAsyncThunk(
       });
 
       const savedPlan = response.data.data?.plan ?? {};
+      const receivedMealTypes = new Set();
       for (const [dateKey, dayPlan] of Object.entries(savedPlan)) {
         if (!weekPlan[dateKey]) weekPlan[dateKey] = {};
         for (const [mealType, mealInfo] of Object.entries(dayPlan)) {
+          receivedMealTypes.add(mealType);
           weekPlan[dateKey][mealType] = {
             id: mealInfo.meal_id,
             name: mealInfo.meal_name,
@@ -113,7 +115,7 @@ export const fetchWeeklyPlan = createAsyncThunk(
         }
       }
 
-      return { weekPlan, weekOffset };
+      return { weekPlan, weekOffset, receivedMealTypes: Array.from(receivedMealTypes) };
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || 'Failed to fetch meal plan');
     }
@@ -337,6 +339,20 @@ const mealPlannerSlice = createSlice({
         state.loading = false;
         state.currentWeekPlan = action.payload.weekPlan;
         state.currentWeekOffset = action.payload.weekOffset;
+        
+        const receivedMealTypes = action.payload.receivedMealTypes || [];
+        if (receivedMealTypes.length > 0) {
+          state.mealTypes = state.mealTypes.map(mt => ({
+            ...mt,
+            enabled: receivedMealTypes.includes(mt.key)
+          }));
+        } else {
+          const defaultEnabled = ['breakfast', 'lunch', 'highTea', 'dinner'];
+          state.mealTypes = state.mealTypes.map(mt => ({
+            ...mt,
+            enabled: defaultEnabled.includes(mt.key)
+          }));
+        }
       })
       .addCase(fetchWeeklyPlan.rejected,  (state, action) => { state.loading = false; state.error = action.payload; })
 

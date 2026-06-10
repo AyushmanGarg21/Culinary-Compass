@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, IconButton, Chip, Tooltip, Fade } from '@mui/material';
+import { Typography, IconButton, Chip, Tooltip, Fade, Avatar } from '@mui/material';
 import { 
   PersonRemoveRounded as PersonRemoveRoundedIcon, 
   FiberManualRecord as FiberManualRecordIcon,
@@ -14,10 +14,10 @@ const UserFollowedCard = ({ user }) => {
   const { followingIds } = useSelector((state) => state.followedUsers);
   const [isHovered, setIsHovered] = useState(false);
   
-  const isFollowing = followingIds.includes(user.id);
+  const isFollowing = followingIds.includes(user.user_id);
 
   const handleToggleFollow = () => {
-    dispatch(toggleFollow(user.id));
+    dispatch(toggleFollow(user.user_id));
   };
 
   const getFoodPreferenceColor = (preference) => {
@@ -36,13 +36,23 @@ const UserFollowedCard = ({ user }) => {
   };
 
   const formatLastActive = (dateString) => {
+    if (!dateString) return 'Active recently';
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Active now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     return `${Math.floor(diffInHours / 24)}d ago`;
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
 
   return (
@@ -56,11 +66,20 @@ const UserFollowedCard = ({ user }) => {
       >
         {/* Profile Image */}
         <div className="relative">
-          <img
-            src={user.image}
-            alt={user.username}
-            className="w-12 h-12 rounded-full border-2 border-white shadow-md object-cover"
-          />
+          {user.profile_pic ? (
+            <img
+              src={user.profile_pic}
+              alt={user.name}
+              className="w-12 h-12 rounded-full border-2 border-white shadow-md object-cover"
+            />
+          ) : (
+            <Avatar 
+              className="w-12 h-12 border-2 border-white shadow-md"
+              sx={{ bgcolor: '#8B5CF6', fontSize: '1.25rem' }}
+            >
+              {getInitials(user.name)}
+            </Avatar>
+          )}
         </div>
 
         {/* User Info */}
@@ -69,19 +88,25 @@ const UserFollowedCard = ({ user }) => {
             variant="subtitle2" 
             className="font-semibold text-gray-800 truncate"
           >
-            {user.username}
+            {user.name}
           </Typography>
           
-          <div className="flex items-center space-x-2 mt-1">
-            <Chip 
-              label={user.foodPreference}
-              size="small"
-              className={`text-xs ${getFoodPreferenceColor(user.foodPreference)}`}
-            />
+          {user.food_preference && (
+            <div className="flex items-center space-x-2 mt-1">
+              <Chip
+                label={user.food_preference}
+                size="small"
+                className={`text-xs ${getFoodPreferenceColor(user.food_preference)}`}
+              />
+            </div>
+          )}
+
+          <div className="text-xs text-gray-500 truncate mt-1">
+            {user.about_me || `${user.city || ''} ${user.country || ''}`.trim()}
           </div>
 
           <div className="text-xs text-gray-500 mt-1">
-            <span>{formatLastActive(user.lastActive)}</span>
+            <span>{formatLastActive(user.last_active)}</span>
           </div>
         </div>
 

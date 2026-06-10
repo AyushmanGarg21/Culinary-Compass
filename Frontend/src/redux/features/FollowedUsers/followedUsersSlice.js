@@ -65,7 +65,7 @@ const followedUsersSlice = createSlice({
         state.loading = false;
         state.followedUsers = action.payload.following ?? action.payload;
         state.total = action.payload.total ?? state.followedUsers.length;
-        state.followingIds = state.followedUsers.map((u) => u.id);
+        state.followingIds = state.followedUsers.map((u) => u.user_id);
       })
       .addCase(fetchFollowedUsers.rejected, (state, action) => {
         state.loading = false;
@@ -82,7 +82,7 @@ const followedUsersSlice = createSlice({
     // unfollowUser
     builder.addCase(unfollowUser.fulfilled, (state, action) => {
       state.followingIds = state.followingIds.filter((id) => id !== action.payload);
-      state.followedUsers = state.followedUsers.filter((u) => u.id !== action.payload);
+      state.followedUsers = state.followedUsers.filter((u) => u.user_id !== action.payload);
     });
   },
 });

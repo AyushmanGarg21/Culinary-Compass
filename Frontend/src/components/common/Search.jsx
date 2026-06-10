@@ -12,8 +12,8 @@ const Search = ({ list, setId, action = null, componentName }) => {
     setQuery(value);
     setIsSearching(value.length > 0);
 
-    const results = list.filter((item) =>
-      item.name.toLowerCase().includes(value)
+    const results = (list || []).filter((item) =>
+      item?.name?.toLowerCase().includes(value)
     );
     setFilteredResults(results);
   };

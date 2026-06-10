@@ -153,6 +153,8 @@ class UserPostService:
                     "country": user.country.name if user.country else None,
                     "gender": user.gender,
                     "language": user.language,
+                    "food_preference": user.food_preference,
+                    "last_active": user.last_active.isoformat() if user.last_active else None,
                     "is_creator": user.is_creator,
                     "followed_at": follow.created_at.isoformat() if follow.created_at else None
                 }
@@ -363,7 +365,9 @@ class UserPostService:
                     "city": creator.city.name if creator.city else None,
                     "country": creator.country.name if creator.country else None,
                     "gender": creator.gender,
-                    "language": creator.language
+                    "language": creator.language,
+                    "food_preference": creator.food_preference,
+                    "last_active": creator.last_active.isoformat() if creator.last_active else None
                 }
                 creators_data.append(creator_info)
 
@@ -447,6 +451,8 @@ class UserPostService:
                 "location": location,
                 "gender": creator.gender,
                 "language": creator.language,
+                "food_preference": creator.food_preference,
+                "last_active": creator.last_active.isoformat() if creator.last_active else None,
                 "follower_count": follower_count or 0,
                 "post_count": post_count or 0
             }

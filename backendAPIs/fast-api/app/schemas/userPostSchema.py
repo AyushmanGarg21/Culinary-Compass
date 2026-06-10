@@ -43,6 +43,8 @@ class UserBasicInfo(BaseModel):
     country: Optional[str] = None
     gender: Optional[str] = None
     language: Optional[str] = None
+    food_preference: Optional[str] = None
+    last_active: Optional[str] = None
     is_creator: bool = False
 
 
@@ -69,6 +71,8 @@ class CreatorInfo(BaseModel):
     country: Optional[str] = None
     gender: Optional[str] = None
     language: Optional[str] = None
+    food_preference: Optional[str] = None
+    last_active: Optional[str] = None
 
 
 class CreatorSearchResponse(BaseModel):
@@ -88,6 +92,8 @@ class CreatorDetailsResponse(BaseModel):
     location: Optional[str] = None
     gender: Optional[str] = None
     language: Optional[str] = None
+    food_preference: Optional[str] = None
+    last_active: Optional[str] = None
     follower_count: int = 0
     post_count: int = 0
 
