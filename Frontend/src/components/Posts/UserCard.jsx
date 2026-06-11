@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFollow } from '../../redux/features/FollowedUsers/followedUsersSlice';
-import { 
-  PersonAddAlt1Rounded as PersonAddAlt1RoundedIcon, 
+import {
+  PersonAddAlt1Rounded as PersonAddAlt1RoundedIcon,
   PersonRemoveRounded as PersonRemoveRoundedIcon,
-  LocationOn as LocationOnIcon, 
-  Restaurant as RestaurantIcon, 
-  Person as PersonIcon, 
-  Language as LanguageIcon 
+  LocationOn as LocationOnIcon,
+  Restaurant as RestaurantIcon,
+  Person as PersonIcon,
+  Language as LanguageIcon
 } from '@mui/icons-material';
 import { Chip, IconButton, Tooltip, Fade } from '@mui/material';
 
@@ -15,7 +15,7 @@ const UserCard = ({ id }) => {
 
   // Fetch user data from Redux store
   const user = useSelector((state) =>
-    state.users.users.find((user) => user.id === id)
+    state.users.users.find((user) => user.user_id === id)
   );
 
   const isFollowing = useSelector((state) =>
@@ -56,7 +56,7 @@ const UserCard = ({ id }) => {
         {/* Profile Image with Gradient Overlay */}
         <div className="relative h-24 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500">
           <img
-            src={user.profileImage || "https://via.placeholder.com/100"}
+            src={user.profile_pic || "https://via.placeholder.com/100"}
             alt={`${user.name}'s profile`}
             className="w-16 h-16 rounded-full object-cover border-3 border-white shadow-md absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2"
           />
@@ -70,11 +70,10 @@ const UserCard = ({ id }) => {
             <Tooltip title={isFollowing ? "Unfollow" : "Follow"}>
               <IconButton
                 onClick={handleFollow}
-                className={`ml-2 transition-all duration-300 ${
-                  isFollowing 
-                    ? 'bg-red-500 text-white hover:bg-red-600' 
-                    : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                }`}
+                className={`ml-2 transition-all duration-300 ${isFollowing
+                  ? 'bg-red-500 text-white hover:bg-red-600'
+                  : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                  }`}
                 size="small"
               >
                 {isFollowing ? (
@@ -88,7 +87,7 @@ const UserCard = ({ id }) => {
 
           {/* About Me */}
           <p className="text-xs text-gray-600 mb-3 line-clamp-2">
-            {user.aboutMe || "No information available."}
+            {user.about_me || "No information available."}
           </p>
 
           {/* User Info Grid */}
@@ -102,10 +101,10 @@ const UserCard = ({ id }) => {
 
             <div className="flex items-center space-x-2">
               <RestaurantIcon className="text-orange-500 text-sm" />
-              <Chip 
-                label={user.foodPreference || "N/A"}
+              <Chip
+                label={user.food_preference || "N/A"}
                 size="small"
-                className={`text-xs ${getFoodPreferenceColor(user.foodPreference)}`}
+                className={`text-xs ${getFoodPreferenceColor(user.food_preference)}`}
               />
             </div>
 

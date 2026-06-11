@@ -19,7 +19,7 @@ const Search = ({ list, setId, action = null, componentName }) => {
   };
 
   const handleSelect = (item) => {
-    setId(item.id);
+    setId(item.user_id);
     setQuery('');
     setFilteredResults([]);
     setIsSearching(false);
@@ -58,8 +58,8 @@ const Search = ({ list, setId, action = null, componentName }) => {
           ),
           endAdornment: query && (
             <InputAdornment position="end">
-              <IconButton 
-                onClick={handleClear} 
+              <IconButton
+                onClick={handleClear}
                 edge="end"
                 className="hover:bg-red-50 text-red-500"
                 size="small"
@@ -92,7 +92,7 @@ const Search = ({ list, setId, action = null, componentName }) => {
                 <div className="py-2">
                   {filteredResults.map((item, index) => (
                     <Grow
-                      key={item.id}
+                      key={item.user_id}
                       in={true}
                       timeout={200 + index * 50}
                     >
@@ -101,7 +101,7 @@ const Search = ({ list, setId, action = null, componentName }) => {
                         className="flex items-center space-x-3 p-3 mx-2 cursor-pointer hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-md"
                       >
                         <Avatar
-                          src={item.profileImage}
+                          src={item.profile_pic}
                           alt={item.name}
                           className="w-10 h-10 border-2 border-white shadow-sm"
                         />
@@ -110,7 +110,7 @@ const Search = ({ list, setId, action = null, componentName }) => {
                           <div className="text-sm text-gray-500">{item.country}</div>
                         </div>
                         <div className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                          {item.foodPreference}
+                          {item.food_preference}
                         </div>
                       </div>
                     </Grow>
