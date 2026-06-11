@@ -38,9 +38,10 @@ const UserRequest = () => {
     handleClosePopup();
   };
 
-  const filteredRequests = userRequests.filter((request) =>
-    request.name.toLowerCase().includes(searchQuery)
-  );
+  const filteredRequests = userRequests.filter((request) => {
+    const name = request.username || request.name || "";
+    return name.toLowerCase().includes(searchQuery);
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-orange-50 p-6">
@@ -111,14 +112,14 @@ const UserRequest = () => {
               <div key={request.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-all duration-200 hover:border-orange-200">
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-slate-800 font-inter">{request.name}</h3>
+                    <h3 className="text-lg font-semibold text-slate-800 font-inter">{request.username || request.name}</h3>
                     <span className="inline-block px-2 py-1 text-xs font-medium bg-orange-100 text-orange-700 rounded-full">
                       User Request
                     </span>
                   </div>
                 </div>
-                <p className="text-slate-600 mb-4 text-sm leading-relaxed">
-                  <span className="font-medium text-slate-700">Message:</span> {request.message}
+                <p className="text-slate-600 mb-4 text-sm leading-relaxed line-clamp-3">
+                  <span className="font-medium text-slate-700">Message:</span> {request.description || request.message}
                 </p>
                 <Button
                   variant="contained"

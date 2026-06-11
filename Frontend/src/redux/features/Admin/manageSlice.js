@@ -91,8 +91,8 @@ const manageSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.usersData.status = 'succeeded';
-        state.usersData.data = action.payload.users ?? action.payload;
-        state.usersData.total = action.payload.total ?? action.payload.length;
+        state.usersData.data = action.payload.users ?? action.payload.data ?? action.payload;
+        state.usersData.total = action.payload.total ?? (Array.isArray(action.payload) ? action.payload.length : 0);
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.usersData.status = 'failed';
@@ -107,8 +107,8 @@ const manageSlice = createSlice({
       })
       .addCase(fetchCreators.fulfilled, (state, action) => {
         state.creatorsData.status = 'succeeded';
-        state.creatorsData.data = action.payload.creators ?? action.payload;
-        state.creatorsData.total = action.payload.total ?? action.payload.length;
+        state.creatorsData.data = action.payload.creators ?? action.payload.data ?? action.payload;
+        state.creatorsData.total = action.payload.total ?? (Array.isArray(action.payload) ? action.payload.length : 0);
       })
       .addCase(fetchCreators.rejected, (state, action) => {
         state.creatorsData.status = 'failed';

@@ -43,7 +43,7 @@ const UserRequestPopup = ({ request, onClose, onAccept, onDecline }) => {
         <div className="space-y-6">
           {/* User Info Header */}
           <div className="p-4 bg-orange-50 rounded-lg">
-            <h3 className="text-xl font-semibold text-slate-800 font-inter mb-1">{request.name}</h3>
+            <h3 className="text-xl font-semibold text-slate-800 font-inter mb-1">{request.username || request.name}</h3>
             <span className="text-sm text-orange-600 font-medium">User Application</span>
           </div>
 
@@ -51,30 +51,42 @@ const UserRequestPopup = ({ request, onClose, onAccept, onDecline }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-slate-50 rounded-lg">
               <h4 className="font-semibold text-slate-700 mb-2 font-inter">Email</h4>
-              <p className="text-slate-600 break-all">{request.email}</p>
+              <p className="text-slate-600 break-all">{request.email || "N/A"}</p>
             </div>
             <div className="p-4 bg-slate-50 rounded-lg">
               <h4 className="font-semibold text-slate-700 mb-2 font-inter">Phone</h4>
-              <p className="text-slate-600">{request.phone}</p>
+              <p className="text-slate-600">{request.phone || request.phone_no || "N/A"}</p>
             </div>
           </div>
 
           {/* Message */}
           <div className="p-4 bg-slate-50 rounded-lg">
             <h4 className="font-semibold text-slate-700 mb-2 font-inter">Message</h4>
-            <p className="text-slate-600 leading-relaxed">{request.message}</p>
+            <p className="text-slate-600 leading-relaxed">{request.description || request.message || "No message provided"}</p>
           </div>
 
           {/* Experience */}
           <div className="p-4 bg-slate-50 rounded-lg">
             <h4 className="font-semibold text-slate-700 mb-2 font-inter">Experience</h4>
-            <p className="text-slate-600 leading-relaxed">{request.experience}</p>
+            <p className="text-slate-600 leading-relaxed">{request.experience || "No experience provided"}</p>
           </div>
 
           {/* Links */}
           <div className="p-4 bg-slate-50 rounded-lg">
             <h4 className="font-semibold text-slate-700 mb-2 font-inter">Portfolio Links</h4>
-            <p className="text-slate-600 break-all">{request.links}</p>
+            {Array.isArray(request.links) ? (
+              <ul className="list-disc list-inside space-y-1 text-blue-600 break-all">
+                {request.links.map((link, idx) => (
+                  <li key={idx}>
+                    <a href={link} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-slate-600 break-all">{request.links || "No links provided"}</p>
+            )}
           </div>
         </div>
         

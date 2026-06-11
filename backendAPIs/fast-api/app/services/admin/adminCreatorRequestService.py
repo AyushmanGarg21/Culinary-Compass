@@ -65,6 +65,8 @@ class AdminCreatorRequestService:
                     "userId": req.user_id,
                     "username": req.user.name if req.user else "Unknown",
                     "profilePic": req.user.profile_pic if req.user else "",
+                    "email": req.user.email if req.user else "",
+                    "phone": req.user.phone_no if req.user else "",
                     "description": req.about_self,
                     "experience": req.experience,
                     "links": req.links,
