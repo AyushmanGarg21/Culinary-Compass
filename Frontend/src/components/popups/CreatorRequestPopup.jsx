@@ -4,10 +4,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const CreatorRequestPopup = ({ request, onClose, onApprove, onReject }) => {
   return (
-    <Dialog 
-      open={!!request} 
-      onClose={onClose} 
-      maxWidth="md" 
+    <Dialog
+      open={!!request}
+      onClose={onClose}
+      maxWidth="md"
       fullWidth
       PaperProps={{
         sx: {
@@ -16,7 +16,7 @@ const CreatorRequestPopup = ({ request, onClose, onApprove, onReject }) => {
         }
       }}
     >
-      <DialogTitle sx={{ 
+      <DialogTitle sx={{
         fontFamily: 'Inter, system-ui, sans-serif',
         fontWeight: '700',
         fontSize: '1.5rem',
@@ -28,9 +28,9 @@ const CreatorRequestPopup = ({ request, onClose, onApprove, onReject }) => {
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={{ 
-            position: 'absolute', 
-            right: 8, 
+          sx={{
+            position: 'absolute',
+            right: 8,
             top: 8,
             color: '#64748b',
             '&:hover': { backgroundColor: '#f1f5f9' }
@@ -43,10 +43,10 @@ const CreatorRequestPopup = ({ request, onClose, onApprove, onReject }) => {
         <div className="space-y-6">
           {/* User Info */}
           <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg">
-            <img 
-              src={request.profilePic} 
-              alt="Profile" 
-              className="w-12 h-12 rounded-full border-2 border-blue-200" 
+            <img
+              src={request.profilePic}
+              alt="Profile"
+              className="w-12 h-12 rounded-full border-2 border-blue-200"
             />
             <div>
               <h3 className="text-lg font-semibold text-slate-800 font-inter">{request.username}</h3>
@@ -56,35 +56,35 @@ const CreatorRequestPopup = ({ request, onClose, onApprove, onReject }) => {
 
           {/* Post Image */}
           <div className="rounded-lg overflow-hidden border border-slate-200">
-            <img src={request.image} alt="Post" className="w-full h-auto" />
+            <img src={request.image || "https://via.placeholder.com/100"} alt="Post" className="w-full h-auto" />
           </div>
 
           {/* Details */}
           <div className="space-y-4">
             <div className="p-4 bg-slate-50 rounded-lg">
               <h4 className="font-semibold text-slate-700 mb-2 font-inter">Description</h4>
-              <p className="text-slate-600 leading-relaxed">{request.description}</p>
+              <p className="text-slate-600 leading-relaxed">{request.overview}</p>
             </div>
 
             <div className="p-4 bg-slate-50 rounded-lg">
               <h4 className="font-semibold text-slate-700 mb-2 font-inter">Materials</h4>
-              <p className="text-slate-600">{request.materials.join(', ')}</p>
+              <p className="text-slate-600">{request.ingredients.join(', ')}</p>
             </div>
 
             <div className="p-4 bg-slate-50 rounded-lg">
               <h4 className="font-semibold text-slate-700 mb-2 font-inter">Full Recipe</h4>
-              <div 
-                className="text-slate-600 leading-relaxed prose prose-sm max-w-none" 
-                dangerouslySetInnerHTML={{ __html: request.fullRecipe }}
+              <div
+                className="text-slate-600 leading-relaxed prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: request.instructions }}
               />
             </div>
           </div>
         </div>
-        
+
         <div className="mt-6 flex gap-3">
-          <Button 
-            variant="contained" 
-            fullWidth 
+          <Button
+            variant="contained"
+            fullWidth
             onClick={onApprove}
             sx={{
               backgroundColor: '#10b981',
@@ -99,9 +99,9 @@ const CreatorRequestPopup = ({ request, onClose, onApprove, onReject }) => {
           >
             Approve Request
           </Button>
-          <Button 
-            variant="contained" 
-            fullWidth 
+          <Button
+            variant="contained"
+            fullWidth
             onClick={onReject}
             sx={{
               backgroundColor: '#ef4444',

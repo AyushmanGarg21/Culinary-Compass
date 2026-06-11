@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPostRequests, approvePostRequest, rejectPostRequest } from '../../redux/features/Admin/requestSlice';
 import CreatorRequestPopup from '../../components/popups/CreatorRequestPopup';
-import { Button, TextField ,InputAdornment } from '@mui/material';
+import { Button, TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 const CreatorRequest = () => {
@@ -111,10 +111,10 @@ const CreatorRequest = () => {
             filteredRequests.map((request) => (
               <div key={request.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-all duration-200 hover:border-blue-200">
                 <div className="flex items-center mb-4">
-                  <img 
-                    src={request.profilePic} 
-                    alt="Profile" 
-                    className="w-12 h-12 rounded-full border-2 border-slate-200 mr-3" 
+                  <img
+                    src={request.profilePic}
+                    alt="Profile"
+                    className="w-12 h-12 rounded-full border-2 border-slate-200 mr-3"
                   />
                   <div>
                     <h3 className="text-lg font-semibold text-slate-800 font-inter">{request.username}</h3>
@@ -124,10 +124,10 @@ const CreatorRequest = () => {
                   </div>
                 </div>
                 <p className="text-slate-600 mb-4 text-sm leading-relaxed">
-                  <span className="font-medium text-slate-700">Description:</span> {request.description}
+                  <span className="font-medium text-slate-700">Description:</span> {request.overview}
                 </p>
-                <Button 
-                  variant="contained" 
+                <Button
+                  variant="contained"
                   onClick={() => handleView(request)}
                   sx={{
                     backgroundColor: '#3b82f6',
