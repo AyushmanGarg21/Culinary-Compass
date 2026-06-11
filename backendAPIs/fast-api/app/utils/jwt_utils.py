@@ -59,6 +59,7 @@ def create_access_token(
 def create_refresh_token(
     user_id: str,
     email: str,
+    is_admin: bool = False,
     expires_delta: Optional[timedelta] = None
 ) -> str:
     """Create a JWT refresh token.
@@ -66,6 +67,7 @@ def create_refresh_token(
     Args:
         user_id: User's unique identifier
         email: User's email address
+        is_admin: Admin status flag
         expires_delta: Token expiration time delta
         
     Returns:
@@ -86,6 +88,7 @@ def create_refresh_token(
         "email": email,
         "exp": expire,
         "iat": datetime.now(timezone.utc),
+        "is_admin": is_admin,
         "type": "refresh"
     }
     

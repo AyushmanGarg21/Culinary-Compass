@@ -362,7 +362,8 @@ class AuthService:
             )
             refresh_token = create_refresh_token(
                 user_id=admin.id,
-                email=email
+                email=email,
+                is_admin=True
             )
 
             return {
@@ -419,6 +420,33 @@ class AuthService:
 
             user_id = payload.get("sub")
             email = payload.get("email")
+            is_admin = payload.get("is_admin", False)
+
+            if is_admin:
+                admin = db.query(Admin).filter(Admin.id == user_id).first()
+                if not admin or not admin.is_active:
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="Admin not found or inactive"
+                    )
+                
+                provider = db.query(AuthProvider).filter(
+                    AuthProvider.provider_name == "admin"
+                ).first()
+                provider_id = provider.id if provider else 1
+
+                access_token_expires = datetime.now(timezone.utc) + timedelta(hours=8)
+                access_token = create_access_token(
+                    user_id=admin.id,
+                    email=email,
+                    provider_id=provider_id,
+                    is_admin=True,
+                    expires_delta=timedelta(hours=8)
+                )
+                return {
+                    "access_token": access_token,
+                    "token_type": "bearer"
+                }
 
             # Find auth identity
             auth_identity = db.query(UserAuthIdentity).filter(

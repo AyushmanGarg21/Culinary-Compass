@@ -167,6 +167,17 @@ class AuthMiddleware:
                 log_warning(f"Inactive user attempted access: {user_id}")
                 return None
             
+            if is_admin:
+                return {
+                    "user_id": user.id,
+                    "email": user.email,
+                    "is_active": user.is_active,
+                    "is_creator": False,
+                    "is_admin": True,
+                    "name": getattr(user, "name", None),
+                    "phone_no": getattr(user, "phone_no", None),
+                }
+            
             auth_identity = (
                 db.query(UserAuthIdentity)
                 .filter(
